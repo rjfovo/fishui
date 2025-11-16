@@ -22,11 +22,13 @@
 #include <QApplication>
 #include <QPainterPath>
 #include <QScreen>
-#include <QX11Info>
 
 #include <xcb/xcb.h>
 #include <xcb/shape.h>
 #include <xcb/xcb_icccm.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xlib-xcb.h>
 
 WindowBlur::WindowBlur(QObject *parent) noexcept
     : QObject(parent)
@@ -118,7 +120,7 @@ void WindowBlur::updateBlur()
     if (!m_view)
         return;
 
-    xcb_connection_t *c = QX11Info::connection();
+    xcb_connection_t *c = x11Connection();
     if (!c)
         return;
 
@@ -149,3 +151,16 @@ void WindowBlur::updateBlur()
         xcb_delete_property(c, m_view->winId(), atom->atom);
     }
 }
+
+xcb_connection_t* WindowBlur::x11Connection() const
+{
+    static xcb_connection_t* connection = nullptr;
+    if (!connection) {
+        Display* display = XOpenDisplay(nullptr);
+        if (!display) return nullptr;
+        connection = XGetXCBConnection(display);
+    }
+    return connection;
+}
+
+

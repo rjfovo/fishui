@@ -28,41 +28,37 @@
 #define QQMLSORTFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
+#include <QRegularExpression>
 #include <QQmlExpression>
+#include <QQmlScriptString>
 
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QString filterRoleName READ filterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
-    Q_PROPERTY(
-        QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
-    Q_PROPERTY(PatternSyntax filterPatternSyntax READ filterPatternSyntax WRITE
-                   setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
+    Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
+    Q_PROPERTY(PatternSyntax filterPatternSyntax READ filterPatternSyntax WRITE setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
     Q_PROPERTY(QVariant filterValue READ filterValue WRITE setFilterValue NOTIFY filterValueChanged)
-    Q_PROPERTY(QQmlScriptString filterExpression READ filterExpression WRITE setFilterExpression
-                   NOTIFY filterExpressionChanged)
+    Q_PROPERTY(QQmlScriptString filterExpression READ filterExpression WRITE setFilterExpression NOTIFY filterExpressionChanged)
 
-    Q_PROPERTY(
-        QString sortRoleName READ sortRoleName WRITE setSortRoleName NOTIFY sortRoleNameChanged)
+    Q_PROPERTY(QString sortRoleName READ sortRoleName WRITE setSortRoleName NOTIFY sortRoleNameChanged)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
     Q_PROPERTY(QQmlScriptString sortExpression READ sortExpression WRITE setSortExpression NOTIFY sortExpressionChanged)
 
 public:
+
+    // Qt6 兼容 PatternSyntax（保留原 QML API）
     enum PatternSyntax {
-        RegExp = QRegExp::RegExp,
-        Wildcard = QRegExp::Wildcard,
-        FixedString = QRegExp::FixedString,
-        RegExp2 = QRegExp::RegExp2,
-        WildcardUnix = QRegExp::WildcardUnix,
-        W3CXmlSchema11 = QRegExp::W3CXmlSchema11
+        RegExp = 0,
+        Wildcard,
+        FixedString
     };
     Q_ENUM(PatternSyntax)
 
-    QQmlSortFilterProxyModel(QObject *parent = 0);
+    explicit QQmlSortFilterProxyModel(QObject *parent = nullptr);
 
     int count() const;
-
     QHash<int, QByteArray> roleNames() const override;
 
     const QString &filterRoleName() const;
@@ -72,7 +68,7 @@ public:
     void setFilterPattern(const QString &filterPattern);
 
     PatternSyntax filterPatternSyntax() const;
-    void setFilterPatternSyntax(PatternSyntax patternSyntax);
+    void setFilterPatternSyntax(PatternSyntax syntax);
 
     const QVariant &filterValue() const;
     void setFilterValue(const QVariant &filterValue);
@@ -90,13 +86,11 @@ public:
 
 signals:
     void countChanged();
-
     void filterRoleNameChanged();
     void filterPatternSyntaxChanged();
     void filterPatternChanged();
     void filterValueChanged();
     void filterExpressionChanged();
-
     void sortRoleNameChanged();
     void sortOrderChanged();
     void sortExpressionChanged();
@@ -117,11 +111,15 @@ private:
     QString m_filterRoleName;
     QString m_sortRoleName;
 
+    PatternSyntax m_syntax = RegExp;
+    QString m_filterPattern;
+
     QQmlScriptString m_filterScriptString;
     QQmlExpression *m_filterExpression;
 
     QQmlScriptString m_compareScriptString;
     QQmlExpression *m_compareExpression;
+
     QVariant m_filterValue;
 };
 

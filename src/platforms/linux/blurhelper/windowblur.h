@@ -61,6 +61,8 @@ private slots:
 
 private:
     void updateBlur();
+    // X11 helper
+    xcb_connection_t* x11Connection() const;
 
 signals:
     void viewChanged();

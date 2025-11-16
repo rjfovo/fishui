@@ -46,6 +46,10 @@ private:
     void doStartSystemMoveResize(QWindow *w, int edges);
     void onCompositingChanged(bool enabled);
 
+    // X11 helper
+    xcb_connection_t* x11Connection() const;
+    xcb_window_t x11RootWindow() const;
+
 private:
     xcb_atom_t m_moveResizeAtom;
     bool m_compositing;

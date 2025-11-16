@@ -21,8 +21,9 @@
 
 #include <QQuickWindow>
 #include <QGuiApplication>
-#include <QImageReader>
+#include <QUrl>
 #include <QPainter>
+#include <QImageReader>
 #include <QIcon>
 
 NewIconItem::NewIconItem(QQuickItem *parent)
@@ -34,21 +35,20 @@ NewIconItem::NewIconItem(QQuickItem *parent)
 
 void NewIconItem::setSource(const QVariant &source)
 {
-    if (source == m_source) {
+    if (source == m_source)
         return;
-    }
 
     m_source = source;
     QString sourceString = source.toString();
 
-    if (source.canConvert<QIcon>() && !source.value<QIcon>().name().isEmpty()) {
+    // QIcon from QVariant (Qt6)
+    if (source.canConvert<QIcon>() && !source.value<QIcon>().name().isEmpty())
         sourceString = source.value<QIcon>().name();
-    }
 
     QString localFile;
-    if (sourceString.startsWith(QLatin1String("file:"))) {
+    if (sourceString.startsWith("file:")) {
         localFile = QUrl(sourceString).toLocalFile();
-    } else if (sourceString.startsWith(QLatin1Char('/'))) {
+    } else if (sourceString.startsWith('/')) {
         localFile = sourceString;
     } else if (sourceString.startsWith("qrc:/")) {
         localFile = sourceString.remove(0, 3);
@@ -57,39 +57,44 @@ void NewIconItem::setSource(const QVariant &source)
     }
 
     if (!localFile.isEmpty()) {
-        if (sourceString.endsWith(QLatin1String(".svg"))
-            || sourceString.endsWith(QLatin1String(".svgz"))
-            || sourceString.endsWith(QLatin1String(".ico"))) {
+        if (sourceString.endsWith(".svg") ||
+            sourceString.endsWith(".svgz") ||
+            sourceString.endsWith(".ico")) {
+
             m_icon = QIcon(localFile);
             m_iconName.clear();
             m_image = QImage();
+
         } else {
             m_image = QImage(localFile);
             m_iconName.clear();
             m_icon = QIcon();
         }
+
     } else if (source.canConvert<QIcon>()) {
         m_icon = source.value<QIcon>();
         m_iconName.clear();
         m_image = QImage();
+
     } else if (source.canConvert<QImage>()) {
         m_image = source.value<QImage>();
         m_iconName.clear();
         m_icon = QIcon();
-    }  else if (source.canConvert<QPixmap>()) {
+
+    } else if (source.canConvert<QPixmap>()) {
         m_image = source.value<QPixmap>().toImage();
         m_iconName.clear();
         m_icon = QIcon();
+
     } else {
-        // From icon theme.
+        // icon theme
         m_icon = QIcon();
         m_image = QImage();
         m_iconName = sourceString;
     }
 
-    if (width() > 0 && height() > 0) {
+    if (width() > 0 && height() > 0)
         loadPixmap();
-    }
 
     emit sourceChanged();
 }
@@ -115,31 +120,39 @@ void NewIconItem::updateIcon()
 
 void NewIconItem::loadPixmap()
 {
-    if (!isComponentComplete()) {
+    if (!isComponentComplete())
         return;
-    }
 
-    QSize size = QSize(width(), height());
-    QPixmap result;
-
-    if (size.width() < 0 ||
-            size.height() < 0) {
+    QSize size(width(), height());
+    if (size.width() <= 0 || size.height() <= 0) {
         m_iconPixmap = QPixmap();
         update();
         return;
     }
 
-    if (!m_iconName.isEmpty()) {
-        QIcon icon = QIcon::fromTheme(m_iconName);
+    QPixmap result;
+    qreal dpr = window() ? window()->devicePixelRatio() : qApp->devicePixelRatio();
 
+    if (!m_iconName.isEmpty()) {
+
+        QIcon icon = QIcon::fromTheme(m_iconName);
         if (icon.isNull())
             icon = QIcon::fromTheme("application-x-desktop");
 
-        result = icon.pixmap(size * qApp->devicePixelRatio());
+        result = icon.pixmap(size * dpr);
+        result.setDevicePixelRatio(dpr);
+
     } else if (!m_icon.isNull()) {
-        result = m_icon.pixmap(window(), size * qApp->devicePixelRatio());
+
+        result = m_icon.pixmap(size * dpr);
+        result.setDevicePixelRatio(dpr);
+
     } else if (!m_image.isNull()) {
+
         result = QPixmap::fromImage(m_image);
+        result = result.scaled(size * dpr, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        result.setDevicePixelRatio(dpr);
+
     } else {
         m_iconPixmap = QPixmap();
         update();
@@ -150,11 +163,10 @@ void NewIconItem::loadPixmap()
     update();
 }
 
-void NewIconItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void NewIconItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    QQuickPaintedItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickPaintedItem::geometryChange(newGeometry, oldGeometry);
 
-    if (newGeometry.width() > 0 && newGeometry.height() > 0) {
+    if (newGeometry.width() > 0 && newGeometry.height() > 0)
         loadPixmap();
-    }
 }
