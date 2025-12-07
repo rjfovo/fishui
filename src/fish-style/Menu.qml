@@ -1,9 +1,9 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Templates 2.12 as T
-import QtQuick.Window 2.12
+import QtQuick 6.0
+import QtQuick.Controls 6.0
+import QtQuick.Templates 6.0 as T
+import QtQuick.Window 6.0
 import FishUI 1.0 as FishUI
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects 1.0
 
 T.Menu
 {

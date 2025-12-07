@@ -1,5 +1,5 @@
-import QtQuick 2.12
-import QtQuick.Templates 2.3 as T
+import QtQuick 6.0
+import QtQuick.Templates 6.0 as T
 
 
 T.StackView {

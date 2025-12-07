@@ -20,9 +20,9 @@
  */
 
 
-import QtQuick 2.6
-import QtGraphicalEffects 1.0
-import QtQuick.Templates 2.3 as T
+import QtQuick 6.0
+import Qt5Compat.GraphicalEffects 1.0
+import QtQuick.Templates 6.0 as T
 import FishUI 1.0 as FishUI
 
 T.Dialog {

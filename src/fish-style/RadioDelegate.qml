@@ -1,6 +1,6 @@
-import QtQuick 2.4
-import QtQuick.Controls 2.4
-import QtQuick.Templates 2.4 as T
+import QtQuick 6.0
+import QtQuick.Controls 6.0
+import QtQuick.Templates 6.0 as T
 import FishUI 1.0 as FishUI
 
 T.RadioDelegate {

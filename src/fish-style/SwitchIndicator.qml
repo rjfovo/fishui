@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 6.0
 import FishUI 1.0 as FishUI
 
 Item {

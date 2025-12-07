@@ -1,6 +1,6 @@
-import QtQuick 2.6
-import QtQuick.Controls 2.3
-import QtQuick.Templates 2.3 as T
+import QtQuick 6.0
+import QtQuick.Controls 6.0
+import QtQuick.Templates 6.0 as T
 import FishUI 1.0 as FishUI
 
 T.Frame {

@@ -1,0 +1,5 @@
+module QtQuick.Controls.2.fish-style
+plugin fishui
+classname FishUIPlugin
+typeinfo plugins.qmltypes
+prefer :/fish-style/

@@ -17,7 +17,7 @@
  *          Loic Molinari <loic.molinari@canonical.com>
  */
 
-import QtQuick 2.4
+import QtQuick 6.0
 
 /*!
     \qmltype Icon

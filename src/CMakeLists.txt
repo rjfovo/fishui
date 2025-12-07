@@ -102,3 +102,5 @@ install(DIRECTORY controls/ DESTINATION ${INSTALL_QMLDIR}/${TARGET})
 # INSTALL STYLE
 # 把 fish-style 作为 Controls.2 下的样式内容安装（保留与原来相同的路径结构）
 install(DIRECTORY fish-style DESTINATION ${INSTALL_QMLDIR}/QtQuick/Controls.2)
+# 确保 qmldir 文件被正确安装
+install(FILES fish-style/qmldir DESTINATION ${INSTALL_QMLDIR}/QtQuick/Controls.2/fish-style)

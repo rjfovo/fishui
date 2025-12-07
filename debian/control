@@ -19,8 +19,8 @@ Homepage: https://cutefishos.com
 
 Package: fishui
 Architecture: any
-Depends: qml-module-qtquick-controls2,
-         qml-module-qtquick2,
+Depends: qml6-module-qtquick-controls,
+         qml6-module-qtquick,
          ${misc:Depends},
          ${shlibs:Depends}
 Description: CutefishOS UIKit

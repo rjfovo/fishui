@@ -1,6 +1,6 @@
-import QtQuick 2.6
-import QtQuick.Templates 2.3 as T
-import QtGraphicalEffects 1.0
+import QtQuick 6.0
+import QtQuick.Templates 6.0 as T
+import Qt5Compat.GraphicalEffects 1.0
 import FishUI 1.0 as FishUI
 
 T.Slider {
