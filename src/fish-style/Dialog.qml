@@ -21,7 +21,7 @@
 
 
 import QtQuick 6.0
-import Qt5Compat.GraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects 6.0
 import QtQuick.Templates 6.0 as T
 import FishUI 1.0 as FishUI
 

@@ -3,7 +3,7 @@ import QtQuick.Controls 6.0
 import QtQuick.Templates 6.0 as T
 import QtQuick.Window 6.0
 import FishUI 1.0 as FishUI
-import Qt5Compat.GraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects 6.0
 
 T.Menu
 {

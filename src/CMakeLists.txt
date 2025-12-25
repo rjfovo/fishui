@@ -93,11 +93,20 @@ if (NOT DEFINED INSTALL_QMLDIR OR INSTALL_QMLDIR STREQUAL "")
     set(INSTALL_QMLDIR "${CMAKE_INSTALL_DATAROOTDIR}/qml")
 endif()
 
+# 设置QML模块属性
+set_target_properties(${TARGET} PROPERTIES
+    QT_QML_MODULE_VERSION "${MODULE_VERSION}"
+    QT_QML_MODULE_URI "FishUI"
+)
+
 install(TARGETS ${TARGET} EXPORT ${TARGET}Targets ${INSTALL_TARGETS_DEFAULT_ARGS})
-install(TARGETS ${TARGET} DESTINATION ${INSTALL_QMLDIR}/${TARGET})
+install(TARGETS ${TARGET} DESTINATION ${INSTALL_QMLDIR}/FishUI)
 
 # Install Controls (QML modules)
-install(DIRECTORY controls/ DESTINATION ${INSTALL_QMLDIR}/${TARGET})
+install(DIRECTORY controls/ DESTINATION ${INSTALL_QMLDIR}/FishUI)
+
+# 确保 qmldir 文件被正确安装到 FishUI 目录
+install(FILES controls/qmldir DESTINATION ${INSTALL_QMLDIR}/FishUI)
 
 # INSTALL STYLE
 # 把 fish-style 作为 Controls.2 下的样式内容安装（保留与原来相同的路径结构）
