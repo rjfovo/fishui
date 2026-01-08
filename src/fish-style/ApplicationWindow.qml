@@ -37,7 +37,7 @@
 import QtQuick 6.0
 import QtQuick.Window 6.0
 import QtQuick.Controls 6.0
-import QtQuick.Controls.impl 2.4
+import QtQuick.Controls.impl 6.0
 import QtQuick.Templates 6.0 as T
 
 T.ApplicationWindow {
@@ -45,11 +45,18 @@ T.ApplicationWindow {
 
     color: palette.window
 
-    overlay.modal: Rectangle {
-        color: Color.transparent(window.palette.shadow, 0.5)
-    }
-
-    overlay.modeless: Rectangle {
-        color: Color.transparent(window.palette.shadow, 0.12)
+    Component.onCompleted: {
+        if (window.overlay) {
+            try {
+                var modalQml = 'import QtQuick 6.0\nRectangle { color: Color.transparent(window.palette.shadow, 0.5) }'
+                var modelessQml = 'import QtQuick 6.0\nRectangle { color: Color.transparent(window.palette.shadow, 0.12) }'
+                var modalObj = Qt.createQmlObject(modalQml, window, 'modalOverlay')
+                window.overlay.modal = modalObj
+                var modelessObj = Qt.createQmlObject(modelessQml, window, 'modelessOverlay')
+                window.overlay.modeless = modelessObj
+            } catch (e) {
+                console.warn('fish-style: could not create overlays:', e)
+            }
+        }
     }
 }

@@ -1,5 +1,29 @@
-module QtQuick.Controls.2.fish-style
-plugin fishui
-classname FishUIPlugin
-typeinfo plugins.qmltypes
-prefer :/fish-style/
+module fish-style
+
+ApplicationWindow 1.0 ApplicationWindow.qml
+Button 1.0 Button.qml
+CheckBox 1.0 CheckBox.qml
+CheckIndicator 1.0 CheckIndicator.qml
+ComboBox 1.0 ComboBox.qml
+Control 1.0 Control.qml
+Dialog 1.0 Dialog.qml
+DialogButtonBox 1.0 DialogButtonBox.qml
+Frame 1.0 Frame.qml
+Label 1.0 Label.qml
+Menu 1.0 Menu.qml
+MenuItem 1.0 MenuItem.qml
+MenuSeparator 1.0 MenuSeparator.qml
+Page 1.0 Page.qml
+RadioButton 1.0 RadioButton.qml
+RadioDelegate 1.0 RadioDelegate.qml
+RadioIndicator 1.0 RadioIndicator.qml
+ScrollBar 1.0 ScrollBar.qml
+Slider 1.0 Slider.qml
+StackView 1.0 StackView.qml
+Switch 1.0 Switch.qml
+SwitchIndicator 1.0 SwitchIndicator.qml
+TabBar 1.0 TabBar.qml
+TabButton 1.0 TabButton.qml
+TextArea 1.0 TextArea.qml
+TextField 1.0 TextField.qml
+ToolTip 1.0 ToolTip.qml

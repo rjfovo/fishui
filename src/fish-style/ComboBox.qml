@@ -37,7 +37,7 @@
 import QtQuick 6.0
 import QtQuick.Window 6.0
 import QtQuick.Controls 6.0
-import QtQuick.Controls.impl 2.4
+import QtQuick.Controls.impl 6.0
 import QtQuick.Templates 6.0 as T
 import Qt5Compat.GraphicalEffects 6.0
 import FishUI 1.0 as FishUI

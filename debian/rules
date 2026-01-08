@@ -6,4 +6,6 @@ export QT_SELECT=6
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DEMBED_TRANSLATIONS=ON -DBUILD_TESTING=ON
+	dh_auto_configure -- -DEMBED_TRANSLATIONS=ON -DBUILD_TESTING=ON \
+		-DCMAKE_INSTALL_FULL_LIBDIR=/usr/lib/x86_64-linux-gnu \
+		-DINSTALL_QMLDIR=/usr/lib/x86_64-linux-gnu/qt6/qml

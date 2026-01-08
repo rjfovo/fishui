@@ -1,6 +1,7 @@
 set(TARGET FishUI)
 set(MODULE_VERSION "1.0")
 
+# Main FishUI plugin
 add_library(${TARGET} SHARED "")
 target_sources(${TARGET} PRIVATE
     fishui.cpp
@@ -105,11 +106,30 @@ install(TARGETS ${TARGET} DESTINATION ${INSTALL_QMLDIR}/FishUI)
 # Install Controls (QML modules)
 install(DIRECTORY controls/ DESTINATION ${INSTALL_QMLDIR}/FishUI)
 
-# 确保 qmldir 文件被正确安装到 FishUI 目录
-install(FILES controls/qmldir DESTINATION ${INSTALL_QMLDIR}/FishUI)
+# 对于 Qt6：把 fish-style 注册为标准 QML 模块（qt6_add_qml_module）
+# 这样 CMake/Qt 会生成并安装合适的 qmldir 到 Qt6 的 QML 安装路径。
+if (TARGET Qt6::Qml AND COMMAND qt6_add_qml_module)
+    file(GLOB FISH_STYLE_QML RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/fish-style/*.qml)
 
-# INSTALL STYLE
-# 把 fish-style 作为 Controls.2 下的样式内容安装（保留与原来相同的路径结构）
-install(DIRECTORY fish-style DESTINATION ${INSTALL_QMLDIR}/QtQuick/Controls.2)
-# 确保 qmldir 文件被正确安装
-install(FILES fish-style/qmldir DESTINATION ${INSTALL_QMLDIR}/QtQuick/Controls.2/fish-style)
+    qt6_add_qml_module(
+        fishstyle_qml
+        URI fish-style
+        VERSION 1.0
+        QML_FILES ${FISH_STYLE_QML}
+        RESOURCES fish-style/style.qrc
+    )
+
+    # Ensure the generated qmldir is installed to the Debian/packaging Qt6 qml dir as well
+    if(DEFINED CMAKE_INSTALL_FULL_LIBDIR)
+        install(DIRECTORY fish-style DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/qt6/qml/QtQuick/Controls)
+    else()
+        # Fall back to the INSTALL_QMLDIR used elsewhere
+        install(DIRECTORY fish-style DESTINATION ${INSTALL_QMLDIR}/QtQuick/Controls)
+    endif()
+else()
+    # CMake/Qt too old or qt6_add_qml_module unavailable: fall back to plain install
+    install(DIRECTORY fish-style DESTINATION ${INSTALL_QMLDIR}/QtQuick/Controls)
+    if(DEFINED CMAKE_INSTALL_FULL_LIBDIR)
+        install(DIRECTORY fish-style DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/qt6/qml/QtQuick/Controls)
+    endif()
+endif()

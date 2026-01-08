@@ -1,10 +1,8 @@
 module FishUI
 plugin FishUI
 classname FishUI
-depends QtQuick.Controls 2.12
-depends QtQuick.Controls.Private 2.10
-depends QtQuick.Controls 2.10
-depends QtGraphicalEffects 1.0
+depends QtQuick.Controls 6.0
+depends Qt5Compat.GraphicalEffects 6.0
 designersupported
 
 typeinfo plugins.qmltypes

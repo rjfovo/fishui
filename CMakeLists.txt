@@ -46,9 +46,9 @@ if (UNIX AND NOT APPLE)
     find_package(KF6WindowSystem REQUIRED)
 endif()
 
-# Query QML install dir using qtpaths
+# Query QML install dir using qtpaths for Qt6
 execute_process(
-    COMMAND qtpaths6 --install-qml
+    COMMAND qtpaths6 --qt-query QT_INSTALL_QML
     OUTPUT_VARIABLE INSTALL_QMLDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
@@ -58,6 +58,7 @@ message(STATUS "QML install directory: ${INSTALL_QMLDIR}")
 set(CMAKECONFIG_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/FishUI")
 message(STATUS "Install directory: ${CMAKECONFIG_INSTALL_DIR}")
 
+# Pass INSTALL_QMLDIR to subdirectory
 add_subdirectory(src)
 
 # Package config
