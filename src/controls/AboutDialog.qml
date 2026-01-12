@@ -39,7 +39,8 @@ FishUI.Window {
 
     DragHandler {
         target: null
-        acceptedDevices: PointerDevice.GenericPointer
+        // Qt6中PointerDevice枚举可能已更改，使用默认值
+        // acceptedDevices: PointerDevice.GenericPointer
         grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
         onActiveChanged: if (active) { control.helper.startSystemMove(control) }
     }

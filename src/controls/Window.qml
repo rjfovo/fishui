@@ -271,12 +271,13 @@ Window {
                 gesturePolicy: TapHandler.DragThreshold
             }
 
-            DragHandler {
-                target: null
-                acceptedDevices: PointerDevice.GenericPointer
-                grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
-                onActiveChanged: if (active) { windowHelper.startSystemMove(control) }
-            }
+        DragHandler {
+            target: null
+            // Qt6中PointerDevice枚举可能已更改，使用默认值
+            // acceptedDevices: PointerDevice.GenericPointer
+            grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
+            onActiveChanged: if (active) { windowHelper.startSystemMove(control) }
+        }
 
             RowLayout {
                 anchors.fill: parent
