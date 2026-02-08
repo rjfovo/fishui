@@ -88,10 +88,10 @@ Window {
                               && control.heightResizable
         z: 999
 
-        onPressed: mouse.accepted = false
+        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: TapHandler.TakeOverForbidden
+            grabPermissions: DragHandler.TakeOverForbidden
             target: null
             onActiveChanged: if (active) {
                                  windowHelper.startSystemResize(control, Qt.LeftEdge | Qt.BottomEdge)
@@ -113,10 +113,10 @@ Window {
                               && control.heightResizable
         z: 999
 
-        onPressed: mouse.accepted = false
+        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: TapHandler.TakeOverForbidden
+            grabPermissions: DragHandler.TakeOverForbidden
             target: null
             onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.RightEdge | Qt.BottomEdge) }
         }
@@ -134,10 +134,10 @@ Window {
         cursorShape: Qt.SizeVerCursor
         z: 999
 
-        onPressed: mouse.accepted = false
+        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: TapHandler.TakeOverForbidden
+            grabPermissions: DragHandler.TakeOverForbidden
             target: null
             onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.TopEdge) }
         }
@@ -155,10 +155,10 @@ Window {
         visible: !isMaximized && !isFullScreen && control.heightResizable
         z: 999
 
-        onPressed: mouse.accepted = false
+        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: TapHandler.TakeOverForbidden
+            grabPermissions: DragHandler.TakeOverForbidden
             target: null
             onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.BottomEdge) }
         }
@@ -176,10 +176,10 @@ Window {
         visible: !isMaximized && !isFullScreen && control.widthResizable
         z: 999
 
-        onPressed: mouse.accepted = false
+        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: TapHandler.TakeOverForbidden
+            grabPermissions: DragHandler.TakeOverForbidden
             target: null
             onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.LeftEdge) }
         }
@@ -197,10 +197,10 @@ Window {
         visible: !isMaximized && !isFullScreen && control.widthResizable
         z: 999
 
-        onPressed: mouse.accepted = false
+        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: TapHandler.TakeOverForbidden
+            grabPermissions: DragHandler.TakeOverForbidden
             target: null
             onActiveChanged: if (active) {
                                  windowHelper.startSystemResize(control, Qt.RightEdge)
@@ -275,7 +275,7 @@ Window {
             target: null
             // Qt6中PointerDevice枚举可能已更改，使用默认值
             // acceptedDevices: PointerDevice.GenericPointer
-            grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
+            grabPermissions: DragHandler.TakeOverForbidden
             onActiveChanged: if (active) { windowHelper.startSystemMove(control) }
         }
 

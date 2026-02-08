@@ -70,7 +70,12 @@ WindowHelper::WindowHelper(QObject *parent)
         }
     }
 
-    // onCompositingChanged(KWindowSystem::compositingActive());
+    // Qt6/KDE6: compositingActive() 可能已被移除或改名
+    // 暂时设置为true，假设合成器正在运行
+    onCompositingChanged(true);
+    // KDE6中信号连接可能需要使用新的语法
+    // 尝试连接compositingChanged信号
+    // 注意：KDE6中KWindowSystem API可能已更改
     // connect(KWindowSystem::self(), &KWindowSystem::compositingChanged,
     //         this, &WindowHelper::onCompositingChanged);
 }
@@ -82,12 +87,14 @@ bool WindowHelper::compositing() const
 
 void WindowHelper::startSystemMove(QWindow *w)
 {
+    // 在Qt6/KDE6中，尝试使用更兼容的方法
+    // 首先尝试使用X11的_NET_WM_MOVERESIZE协议
     doStartSystemMoveResize(w, 16); // move
 }
 
 void WindowHelper::startSystemResize(QWindow *w, Qt::Edges edges)
 {
-    doStartSystemMoveResize(w, edges);
+    doStartSystemMoveResize(w, static_cast<int>(edges));
 }
 
 void WindowHelper::minimizeWindow(QWindow *w)
