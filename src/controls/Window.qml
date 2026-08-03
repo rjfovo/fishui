@@ -74,137 +74,143 @@ Window {
         strength: control.active ? 1.5 : 0.9
     }
 
-    // Left bottom edge
-    MouseArea {
-        height: edgeSize * 2
-        width: height
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        cursorShape: Qt.SizeBDiagCursor
-        propagateComposedEvents: true
-        preventStealing: false
-        visible: !isMaximized && !isFullScreen
-                              && control.widthResizable
-                              && control.heightResizable
-        z: 999
+    // ========== 窗口缩放边缘 ==========
+    // 使用 DragHandler + windowHelper.startSystemResize()。
+    // ⚠ 关键：不能在 QML 中使用 QCursor（C++ 类，QML 默认不可用）！
+    // 之前用 QCursor.pos() 导致 Window.qml 加载时报 ReferenceError，
+    // 使所有 FishUI.Window 应用崩溃 → 黑屏。这里必须用 DragHandler。
+    // DragHandler 激活时 Qt grab 已建立，windowHelper.startSystemResize()
+    // 会交给窗口管理器处理缩放。热区 z:999 防止被内容区覆盖。
 
-        onPressed: function(mouse) { mouse.accepted = false }
+    // Right bottom corner
+    Item {
+        id: bottomRightResizeArea
+        width: edgeSize * 2
+        height: edgeSize * 2
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        z: 999
+        visible: !isMaximized && !isFullScreen
+                 && control.widthResizable
+                 && control.heightResizable
 
         DragHandler {
-            grabPermissions: DragHandler.TakeOverForbidden
+            id: bottomRightResize
             target: null
+            cursorShape: Qt.SizeFDiagCursor
             onActiveChanged: if (active) {
-                                 windowHelper.startSystemResize(control, Qt.LeftEdge | Qt.BottomEdge)
-                             }
-        }
-    }
-
-    // Right bottom edge
-    MouseArea {
-        height: edgeSize * 2
-        width: height
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        cursorShape: Qt.SizeFDiagCursor
-        propagateComposedEvents: true
-        preventStealing: false
-        visible: !isMaximized && !isFullScreen
-                              && control.widthResizable
-                              && control.heightResizable
-        z: 999
-
-        onPressed: function(mouse) { mouse.accepted = false }
-
-        DragHandler {
-            grabPermissions: DragHandler.TakeOverForbidden
-            target: null
-            onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.RightEdge | Qt.BottomEdge) }
-        }
-    }
-
-    // Top edge
-    MouseArea {
-        height: edgeSize / 2
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.leftMargin: edgeSize * 2
-        anchors.rightMargin: edgeSize * 2
-        visible: !isMaximized && !isFullScreen && control.heightResizable
-        cursorShape: Qt.SizeVerCursor
-        z: 999
-
-        onPressed: function(mouse) { mouse.accepted = false }
-
-        DragHandler {
-            grabPermissions: DragHandler.TakeOverForbidden
-            target: null
-            onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.TopEdge) }
+                windowHelper.startSystemResize(control, Qt.RightEdge | Qt.BottomEdge)
+            }
         }
     }
 
     // Bottom edge
-    MouseArea {
-        height: edgeSize / 2
+    Item {
+        id: bottomResizeArea
+        height: edgeSize
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.leftMargin: edgeSize * 2
         anchors.rightMargin: edgeSize * 2
-        cursorShape: Qt.SizeVerCursor
+        z: 999
         visible: !isMaximized && !isFullScreen && control.heightResizable
-        z: 999
-
-        onPressed: function(mouse) { mouse.accepted = false }
 
         DragHandler {
-            grabPermissions: DragHandler.TakeOverForbidden
+            id: bottomResize
             target: null
-            onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.BottomEdge) }
-        }
-    }
-
-    // Left edge
-    MouseArea {
-        width: edgeSize / 2
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.topMargin: edgeSize
-        anchors.bottomMargin: edgeSize * 2
-        cursorShape: Qt.SizeHorCursor
-        visible: !isMaximized && !isFullScreen && control.widthResizable
-        z: 999
-
-        onPressed: function(mouse) { mouse.accepted = false }
-
-        DragHandler {
-            grabPermissions: DragHandler.TakeOverForbidden
-            target: null
-            onActiveChanged: if (active) { windowHelper.startSystemResize(control, Qt.LeftEdge) }
+            cursorShape: Qt.SizeVerCursor
+            onActiveChanged: if (active) {
+                windowHelper.startSystemResize(control, Qt.BottomEdge)
+            }
         }
     }
 
     // Right edge
-    MouseArea {
-        width: edgeSize / 2
+    Item {
+        id: rightResizeArea
+        width: edgeSize
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        anchors.leftMargin: edgeSize
+        anchors.topMargin: edgeSize * 2
         anchors.bottomMargin: edgeSize * 2
-        cursorShape: Qt.SizeHorCursor
-        visible: !isMaximized && !isFullScreen && control.widthResizable
         z: 999
-
-        onPressed: function(mouse) { mouse.accepted = false }
+        visible: !isMaximized && !isFullScreen && control.widthResizable
 
         DragHandler {
-            grabPermissions: DragHandler.TakeOverForbidden
+            id: rightResize
             target: null
+            cursorShape: Qt.SizeHorCursor
             onActiveChanged: if (active) {
-                                 windowHelper.startSystemResize(control, Qt.RightEdge)
-                             }
+                windowHelper.startSystemResize(control, Qt.RightEdge)
+            }
+        }
+    }
+
+    // Left bottom corner
+    Item {
+        id: bottomLeftResizeArea
+        width: edgeSize * 2
+        height: edgeSize * 2
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        z: 999
+        visible: !isMaximized && !isFullScreen
+                 && control.widthResizable
+                 && control.heightResizable
+
+        DragHandler {
+            id: bottomLeftResize
+            target: null
+            cursorShape: Qt.SizeBDiagCursor
+            onActiveChanged: if (active) {
+                windowHelper.startSystemResize(control, Qt.LeftEdge | Qt.BottomEdge)
+            }
+        }
+    }
+
+    // Left edge
+    Item {
+        id: leftResizeArea
+        width: edgeSize
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.topMargin: edgeSize * 2
+        anchors.bottomMargin: edgeSize * 2
+        z: 999
+        visible: !isMaximized && !isFullScreen && control.widthResizable
+
+        DragHandler {
+            id: leftResize
+            target: null
+            cursorShape: Qt.SizeHorCursor
+            onActiveChanged: if (active) {
+                windowHelper.startSystemResize(control, Qt.LeftEdge)
+            }
+        }
+    }
+
+    // Top edge
+    Item {
+        id: topResizeArea
+        height: edgeSize
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.leftMargin: edgeSize * 2
+        anchors.rightMargin: edgeSize * 2
+        z: 999
+        visible: !isMaximized && !isFullScreen && control.heightResizable
+
+        DragHandler {
+            id: topResize
+            target: null
+            cursorShape: Qt.SizeVerCursor
+            onActiveChanged: if (active) {
+                windowHelper.startSystemResize(control, Qt.TopEdge)
+            }
         }
     }
 

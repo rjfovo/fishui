@@ -73,11 +73,6 @@ WindowHelper::WindowHelper(QObject *parent)
     // Qt6/KDE6: compositingActive() 可能已被移除或改名
     // 暂时设置为true，假设合成器正在运行
     onCompositingChanged(true);
-    // KDE6中信号连接可能需要使用新的语法
-    // 尝试连接compositingChanged信号
-    // 注意：KDE6中KWindowSystem API可能已更改
-    // connect(KWindowSystem::self(), &KWindowSystem::compositingChanged,
-    //         this, &WindowHelper::onCompositingChanged);
 }
 
 bool WindowHelper::compositing() const
@@ -87,13 +82,32 @@ bool WindowHelper::compositing() const
 
 void WindowHelper::startSystemMove(QWindow *w)
 {
-    // 在Qt6/KDE6中，尝试使用更兼容的方法
-    // 首先尝试使用X11的_NET_WM_MOVERESIZE协议
+    if (!w) return;
+
+    // 优先使用 Qt 内置的 QWindow::startSystemMove()。
+    // 它的内部实现会先释放 Qt/QML 当前对指针的抓取（例如 DragHandler
+    // 激活时建立的 pointer grab），再向窗口管理器发送移动请求，
+    // 确保 WM 能成功抓到指针并正常接收 ButtonRelease 来结束移动。
+    // 如果直接发送 _NET_WM_MOVERESIZE 而忘记释放 Qt 的 grab，
+    // 会导致：松手后窗口继续跟随鼠标、第二个窗口无法再拖动等问题。
+    if (w->startSystemMove()) {
+        return;
+    }
+
+    // 回退：手动发送 _NET_WM_MOVERESIZE
     doStartSystemMoveResize(w, 16); // move
 }
 
 void WindowHelper::startSystemResize(QWindow *w, Qt::Edges edges)
 {
+    if (!w) return;
+
+    // 与 startSystemMove 同理，优先使用 Qt 内置 API。
+    if (w->startSystemResize(edges)) {
+        return;
+    }
+
+    // 回退：手动发送 _NET_WM_MOVERESIZE
     doStartSystemMoveResize(w, static_cast<int>(edges));
 }
 
@@ -101,48 +115,20 @@ void WindowHelper::minimizeWindow(QWindow *w)
 {
     if (!w) return;
 
-    xcb_connection_t* conn = x11Connection();
-    xcb_window_t root = x11RootWindow();
-    if (!conn || !root) return;
-
-    xcb_atom_t wmStateAtom;
-    {
-        const char* atomName = "_NET_WM_STATE";
-        xcb_intern_atom_cookie_t cookie = xcb_intern_atom(conn, 0, strlen(atomName), atomName);
-        std::unique_ptr<xcb_intern_atom_reply_t, decltype(&free)> reply(xcb_intern_atom_reply(conn, cookie, nullptr), free);
-        if (!reply) return;
-        wmStateAtom = reply->atom;
-    }
-
-    xcb_atom_t hiddenAtom;
-    {
-        const char* atomName = "_NET_WM_STATE_HIDDEN";
-        xcb_intern_atom_cookie_t cookie = xcb_intern_atom(conn, 0, strlen(atomName), atomName);
-        std::unique_ptr<xcb_intern_atom_reply_t, decltype(&free)> reply(xcb_intern_atom_reply(conn, cookie, nullptr), free);
-        if (!reply) return;
-        hiddenAtom = reply->atom;
-    }
-
-    xcb_client_message_event_t ev{};
-    ev.response_type = XCB_CLIENT_MESSAGE;
-    ev.window = w->winId();
-    ev.format = 32;
-    ev.type = wmStateAtom;
-    ev.data.data32[0] = 1; // _NET_WM_STATE_ADD
-    ev.data.data32[1] = hiddenAtom;
-    ev.data.data32[2] = 0;
-    ev.data.data32[3] = 0;
-    ev.data.data32[4] = 0;
-
-    xcb_send_event(conn, 0, root, XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY, reinterpret_cast<const char*>(&ev));
+    // 优先使用 Qt 原生最小化，内部会正确设置窗口状态并通知 WM。
+    // 旧实现发送 _NET_WM_STATE_ADD + _NET_WM_STATE_HIDDEN 是错误的：
+    // _NET_WM_STATE_HIDDEN 是 WM 标记窗口状态的属性，客户端不能通过
+    // 添加该状态来请求最小化，因此最小化按钮点击后没有任何反应。
+    w->showMinimized();
 }
-
 
 void WindowHelper::doStartSystemMoveResize(QWindow *w, int edges)
 {
     if (!w) return;
 
-    const qreal dpiRatio = qApp->devicePixelRatio();
+    // _NET_WM_MOVERESIZE 要求使用根窗口全局坐标（设备像素）。
+    // Qt6 xcb 平台下 QCursor::pos() 返回设备像素坐标（全局坐标），
+    // 不要在这里乘以 devicePixelRatio，否则 HiDPI 下坐标会偏移。
     xcb_connection_t *connection = x11Connection();
     xcb_window_t root = x11RootWindow();
     if (!connection || !root) return;
@@ -152,8 +138,8 @@ void WindowHelper::doStartSystemMoveResize(QWindow *w, int edges)
     xev.type = m_moveResizeAtom;
     xev.format = 32;
     xev.window = w->winId();
-    xev.data.data32[0] = QCursor::pos().x() * dpiRatio;
-    xev.data.data32[1] = QCursor::pos().y() * dpiRatio;
+    xev.data.data32[0] = QCursor::pos().x();
+    xev.data.data32[1] = QCursor::pos().y();
 
     if (edges == 16)
         xev.data.data32[2] = 8; // move
@@ -163,10 +149,19 @@ void WindowHelper::doStartSystemMoveResize(QWindow *w, int edges)
     xev.data.data32[3] = XCB_BUTTON_INDEX_1;
     xev.data.data32[4] = 0;
 
-    xcb_ungrab_pointer(connection, XCB_CURRENT_TIME);
+    // ⚠ 重要：不能调用 xcb_ungrab_pointer！
+    // KWin 收到 _NET_WM_MOVERESIZE 后会自行 grab pointer 并进入交互式移动/缩放模式。
+    // 主动 ungrab 会破坏 Qt/X11 当前的 pointer grab 状态，导致：
+    //   - 窗口被拖出屏幕外/消失
+    //   - 拖动过程卡顿
+    //   - 后续右键菜单/Popup 卡死
     xcb_send_event(connection, 0, root,
                    XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY,
                    reinterpret_cast<const char*>(&xev));
+    // 关键修复：xcb_send_event 只将事件排入输出队列，
+    // 必须调用 xcb_flush() 才能真正发送到 X server。
+    // 缺少 flush 是窗口无法拖动/调整大小的根因。
+    xcb_flush(connection);
 }
 
 void WindowHelper::onCompositingChanged(bool enabled)
