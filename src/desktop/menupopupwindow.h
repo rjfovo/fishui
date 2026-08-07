@@ -42,14 +42,19 @@ public:
 
 public slots:
     Q_INVOKABLE void show();
+    Q_INVOKABLE void popup(int x, int y);
     Q_INVOKABLE void dismissPopup();
     Q_INVOKABLE void updateGeometry();
+
+    // 关闭当前打开的所有菜单（菜单项触发动作后清理整个菜单链）
+    static void closeAllMenus();
 
 signals:
     void popupDismissed();
     void geometryChanged();
 
 protected:
+    void keyPressEvent(QKeyEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
     void mouseReleaseEvent(QMouseEvent *) override;
     void mouseMoveEvent(QMouseEvent *) override;
@@ -63,6 +68,22 @@ private:
     QPointer<QQuickItem> m_contentItem;
     bool m_mouseMoved;
     bool m_dismissed;
+};
+
+// 供 QML 调用的菜单管理器（统一菜单机制：一处关闭所有打开的菜单）
+class MenuManager : public QObject
+{
+    Q_OBJECT
+public:
+    explicit MenuManager(QObject *parent = nullptr)
+        : QObject(parent)
+    {
+    }
+
+    Q_INVOKABLE void closeAllMenus()
+    {
+        MenuPopupWindow::closeAllMenus();
+    }
 };
 
 #endif

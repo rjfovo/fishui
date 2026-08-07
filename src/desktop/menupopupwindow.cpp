@@ -21,7 +21,15 @@
 #include <QGuiApplication>
 #include <QQuickRenderControl>
 #include <QQuickItem>
+#include <QSGRendererInterface>
 #include <QScreen>
+#include <QTimer>
+#include <QKeyEvent>
+
+// X11 窗口类型（KWindowSystem，fishui 构建时可选链接 KF6::WindowSystem）
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <KX11Extras>
+#endif
 
 MenuPopupWindow::MenuPopupWindow(QQuickWindow *parent)
     : QQuickWindow(parent)
@@ -45,12 +53,16 @@ void MenuPopupWindow::applicationStateChanged(Qt::ApplicationState state)
 void MenuPopupWindow::show()
 {
     QPoint pos = QCursor::pos();
+    popup(pos.x(), pos.y());
+}
+
+void MenuPopupWindow::popup(int x, int y)
+{
     const int margin = 6;
     int w = m_contentItem->implicitWidth();
     int h = m_contentItem->implicitHeight() + 16;
-    int posx = pos.x();
-    int posy = pos.y();
-
+    int posx = x;
+    int posy = y;
     QWindow *pw = transientParent();
     if (!pw && parentItem())
         pw = parentItem()->window();
@@ -78,16 +90,35 @@ void MenuPopupWindow::show()
 
     setGeometry(posx, posy, w, h);
 
+    if (QGuiApplication::platformName() == "xcb") {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        KX11Extras::setType(winId(), NET::PopupMenu);
+#endif
+    }
+
     QQuickWindow::show();
     setMouseGrabEnabled(true);
     setKeyboardGrabEnabled(true);
 }
 
+void MenuPopupWindow::closeAllMenus()
+{
+    const auto windows = QGuiApplication::topLevelWindows();
+    for (QWindow *window : windows) {
+        if (auto *menu = qobject_cast<MenuPopupWindow *>(window))
+            menu->dismissPopup();
+    }
+}
+
 void MenuPopupWindow::setParentItem(QQuickItem *item)
 {
     m_parentItem = item;
-    if (m_parentItem)
-        setTransientParent(m_parentItem->window());
+    // 不设置 transient parent：菜单是独立弹窗（POPUP_MENU 类型），
+    // 避免 KWin 将其归入桌面窗口（壁纸/图标层）的堆叠层，
+    // 否则会出现“菜单与壁纸互斥”的问题。
+    // 屏幕几何在 popup() 中回退到 parentItem()->window()，多屏定位不受影响。
+    // if (m_parentItem)
+    //     setTransientParent(m_parentItem->window());
 }
 
 void MenuPopupWindow::setPopupContentItem(QQuickItem *contentItem)
@@ -126,6 +157,19 @@ void MenuPopupWindow::mouseMoveEvent(QMouseEvent *e)
     QQuickWindow::mouseMoveEvent(e);
 }
 
+void MenuPopupWindow::keyPressEvent(QKeyEvent *e)
+{
+    // 修复：Escape 关闭菜单窗口。此前 Escape 事件只传给 QML 层，
+    // 而 QML 层的 Popup 关闭不会隐藏本 C++ 窗口，导致菜单窗口残留
+    // 覆盖桌面，后续右键事件被残留窗口拦截（表现为右键菜单"失效"）。
+    if (e->key() == Qt::Key_Escape) {
+        dismissPopup();
+        e->accept();
+        return;
+    }
+    QQuickWindow::keyPressEvent(e);
+}
+
 void MenuPopupWindow::mousePressEvent(QMouseEvent *e)
 {
     QRect rect = QRect(QPoint(), size());
@@ -140,19 +184,21 @@ void MenuPopupWindow::mouseReleaseEvent(QMouseEvent *e)
 {
     QRect rect = QRect(QPoint(), size());
     if (rect.contains(e->pos())) {
-        if (m_mouseMoved) {
-            QMouseEvent pe = QMouseEvent(QEvent::MouseButtonPress, e->pos(), e->button(), e->buttons(), e->modifiers());
-            QQuickWindow::mousePressEvent(&pe);
-            if (!m_dismissed && e->button() != Qt::RightButton) {
-                dismissPopup();
-                QQuickWindow::mouseReleaseEvent(e);
-            }
-        }
-        m_mouseMoved = true;
-    }
+        // 修复：始终把 release 事件转发给 QML，让菜单项收到完整的
+        // press+release（click）事件，从而触发 onTriggered。
+        // 原实现只在 m_mouseMoved(发生过移动)时才转发 release，
+        // 导致普通点击(无移动)菜单项收不到 release，点击无反应。
+        QQuickWindow::mouseReleaseEvent(e);
 
-    // QQuickWindow::mouseReleaseEvent(e);
-    // dismissPopup();
+        // 左键点击菜单项后关闭整个菜单链（父菜单 + 子菜单）
+        if (e->button() == Qt::LeftButton && !m_dismissed) {
+            closeAllMenus();
+        }
+    } else {
+        // 点击菜单外部：关闭菜单
+        dismissPopup();
+    }
+    m_mouseMoved = true;
 }
 
 bool MenuPopupWindow::event(QEvent *event)

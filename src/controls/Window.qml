@@ -54,6 +54,11 @@ Window {
     property bool widthResizable: maximumWidth > minimumWidth
     property bool heightResizable: maximumHeight > minimumHeight
 
+    // 拉伸优化：窗口尺寸持续变化(用户拉伸/程序调整)期间置 true，
+    // 此时禁用 layer(FBO离屏渲染)+圆角遮罩，尺寸稳定 300ms 后恢复。
+    // 避免每次拉伸都触发全场景 FBO 重渲染 + OpacityMask，在虚拟GPU/慢机器上尤其卡顿。
+    property bool resizing: false
+
     property bool minimizeButtonVisible: true
 
     onHeaderItemChanged: {
@@ -72,6 +77,23 @@ Window {
         view: control
         radius: _background.radius
         strength: control.active ? 1.5 : 0.9
+    }
+
+    // 尺寸变化 → 进入"拉伸中"状态并重启空闲定时器；
+    // 尺寸连续变化时 resizing 保持 true，尺寸稳定 300ms 后恢复圆角/layer。
+    onWidthChanged: _onResizeTick()
+    onHeightChanged: _onResizeTick()
+
+    function _onResizeTick() {
+        resizing = true
+        _resizeIdleTimer.restart()
+    }
+
+    Timer {
+        id: _resizeIdleTimer
+        interval: 300
+        repeat: false
+        onTriggered: control.resizing = false
     }
 
     // ========== 窗口缩放边缘 ==========
@@ -219,7 +241,7 @@ Window {
         id: _background
         anchors.fill: parent
         anchors.margins: 0
-        radius: !isMaximized && !isFullScreen && windowHelper.compositing ? control.windowRadius : 0
+        radius: !isMaximized && !isFullScreen && windowHelper.compositing && !control.resizing ? control.windowRadius : 0
         color: FishUI.Theme.backgroundColor
         antialiasing: true
 
@@ -239,7 +261,7 @@ Window {
                                                                       : Qt.rgba(0, 0, 0, 0.2) : FishUI.Theme.darkMode ? Qt.rgba(255, 255, 255, 0.15)
                                                                                                                       : Qt.rgba(0, 0, 0, 0.15)
         color: "transparent"
-        radius: control.windowRadius
+        radius: control.resizing ? 0 : control.windowRadius
         border.color: borderColor
         border.width: 1 / Screen.devicePixelRatio
         border.pixelAligned: Screen.devicePixelRatio > 1 ? false : true
@@ -359,19 +381,20 @@ Window {
             }
         }
 
-        // Mask
-       layer.enabled: _background.radius > 0
-       layer.effect: OpacityMask {
-           maskSource: Item {
-               width: _contentItem.width
-               height: _contentItem.height
+        // Mask：fishui 侧真圆角（无黑角）。拉伸期间临时禁用 layer(FBO) 以保持流畅，
+        // 尺寸稳定后自动恢复圆角。
+        layer.enabled: !control.resizing && _background.radius > 0
+        layer.effect: OpacityMask {
+            maskSource: Item {
+                width: _contentItem.width
+                height: _contentItem.height
 
-               Rectangle {
-                   anchors.fill: parent
-                   radius: _background.radius
-               }
-           }
-       }
+                Rectangle {
+                    anchors.fill: parent
+                    radius: _background.radius
+                }
+            }
+        }
     }
 
     QtObject {

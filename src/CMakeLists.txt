@@ -73,6 +73,15 @@ if (UNIX AND NOT APPLE)
         target_link_libraries(${TARGET} PRIVATE Qt6::X11Extras)
     endif()
 
+    # windowhelper.cpp / windowblur.cpp 使用 XGetXCBConnection()（libX11-xcb），
+    # 必须显式链接，否则运行时符号解析失败（undefined symbol: XGetXCBConnection）
+    find_package(X11 REQUIRED)
+    if (TARGET X11::XCB)
+        target_link_libraries(${TARGET} PRIVATE X11::XCB)
+    else()
+        target_link_libraries(${TARGET} PRIVATE X11-xcb)
+    endif()
+
     # KF6 WindowSystem（如果顶层已经 find_package(KF6WindowSystem) 则会有目标）
     find_package(KF6WindowSystem QUIET)
     if (TARGET KF6::WindowSystem)

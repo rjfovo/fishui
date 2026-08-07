@@ -62,6 +62,12 @@ void FishUI::registerTypes(const char *uri)
     qmlRegisterType<WheelHandler>(uri, 1, 0, "WheelHandler");
     qmlRegisterType<QQmlSortFilterProxyModel>(uri, 1, 0, "SortFilterProxyModel");
 
+    qmlRegisterSingletonType<MenuManager>(uri, 1, 0, "MenuManager", [](QQmlEngine *engine, QJSEngine *scriptEngine) -> QObject * {
+        Q_UNUSED(engine)
+        Q_UNUSED(scriptEngine)
+        return new MenuManager;
+    });
+
     qmlRegisterSingletonType(componentUrl(QStringLiteral("Theme.qml")), uri, 1, 0, "Theme");
     qmlRegisterSingletonType(componentUrl(QStringLiteral("Units.qml")), uri, 1, 0, "Units");
 
@@ -79,6 +85,7 @@ void FishUI::registerTypes(const char *uri)
     qmlRegisterType(componentUrl(QStringLiteral("Window.qml")), uri, 1, 0, "Window");
     qmlRegisterType(componentUrl(QStringLiteral("RoundImageButton.qml")), uri, 1, 0, "RoundImageButton");
     qmlRegisterType(componentUrl(QStringLiteral("DesktopMenu.qml")), uri, 1, 0, "DesktopMenu");
+    qmlRegisterType(componentUrl(QStringLiteral("MenuItem.qml")), uri, 1, 0, "MenuItem");
 
     qmlProtectModule(uri, 1);
 }
