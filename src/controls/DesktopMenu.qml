@@ -141,4 +141,11 @@ FishUI.MenuPopupWindow {
         _mainLayout.recompute()
         control.showAt(x, y)
     }
+
+    // 返回菜单弹出时的实际窗口尺寸（内容 + 四周 6px 内边距）。
+    // 供调用方在弹出前计算对齐位置（例如 dock 菜单贴紧 dock 边缘弹出）。
+    function contentSize() {
+        _mainLayout.recompute()
+        return Qt.size(_mainLayout.implicitWidth, _mainLayout.implicitHeight)
+    }
 }

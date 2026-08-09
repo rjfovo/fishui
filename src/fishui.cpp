@@ -43,12 +43,12 @@ void FishUI::initializeEngine(QQmlEngine *engine, const char *uri)
     // For system icons
     engine->addImageProvider(QStringLiteral("icontheme"), new IconThemeProvider());
 
-    // 强制 Qt Quick Controls 使用 fish-style 主题：
-    // cutefish-session 设置了 QT_STYLE_OVERRIDE=cutefish，而 QQuickStyle 解析时
-    // 优先使用 QGuiApplicationPrivate::styleOverride（来自 QT_STYLE_OVERRIDE），
-    // 导致所有 QML 应用的 Qt Quick Controls 走“cutefish”这个不存在的 QML 样式模块，
-    // 最终回退到 Basic（看起来就是“默认 demo 样式”）。这里显式指定样式，优先级更高。
-    QQuickStyle::setStyle(QStringLiteral("fish-style"));
+    // 注意：不能在这里调用 QQuickStyle::setStyle("fish-style")——
+    // 样式在「import QtQuick.Controls」时就已解析（此时 FishUI 模块尚未初始化，
+    // initializeEngine 在 import 阶段之后才运行），调用只会触发
+    // "must be called before loading QML" 警告且不生效。
+    // 正确的做法是各应用在 main() 创建 QApplication 后显式调用
+    // QQuickStyle::setStyle("fish-style")（见 cutefish-desktop / cutefish-dock 的 main.cpp）。
 }
 
 void FishUI::registerTypes(const char *uri)
