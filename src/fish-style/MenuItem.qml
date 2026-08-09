@@ -19,7 +19,7 @@ T.MenuItem
 
     readonly property bool isDark: Qt.styleHints.colorScheme === Qt.ColorScheme.Dark
 
-    // 文字颜色使用硬编码（与 FishUI.Theme.textColor/disabledTextColor 一致）：
+    // 文字颜色使用硬编码（与 ThemeValues.textColor/disabledTextColor 一致）：
     // 菜单由独立的 MenuPopupWindow(QQuickWindow) 承载，其 palette 可能未正确初始化
     // （palette.text 不可见，导致菜单项文字不显示），不能依赖 palette。
     readonly property color textColor: isDark ? "#FFFFFF" : "#323238"

@@ -6,18 +6,27 @@
         <file>CheckIndicator.qml</file>
         <file>ComboBox.qml</file>
         <file>Control.qml</file>
+        <file>Dialog.qml</file>
+        <file>DialogButtonBox.qml</file>
+        <file>Frame.qml</file>
         <file>Label.qml</file>
         <file>Menu.qml</file>
         <file>MenuItem.qml</file>
+        <file>MenuSeparator.qml</file>
         <file>Page.qml</file>
         <file>RadioButton.qml</file>
+        <file>RadioDelegate.qml</file>
         <file>RadioIndicator.qml</file>
+        <file>ScrollBar.qml</file>
         <file>Slider.qml</file>
+        <file>StackView.qml</file>
         <file>Switch.qml</file>
         <file>SwitchIndicator.qml</file>
         <file>TabBar.qml</file>
         <file>TabButton.qml</file>
         <file>TextArea.qml</file>
         <file>TextField.qml</file>
+        <file>ThemeValues.js</file>
+        <file>ToolTip.qml</file>
     </qresource>
 </RCC>

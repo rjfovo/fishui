@@ -1,6 +1,6 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.Switch {
     id: control
@@ -26,7 +26,7 @@ T.Switch {
 
         text: control.text
         font: control.font
-        color: control.enabled ? FishUI.Theme.textColor : FishUI.Theme.disabledTextColor
+        color: control.enabled ? ThemeValues.textColor : ThemeValues.disabledTextColor
         elide: Label.ElideRight
         verticalAlignment: Label.AlignVCenter
     }

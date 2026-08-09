@@ -2,7 +2,7 @@ import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Controls.impl 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.Page {
     id: control
@@ -28,6 +28,6 @@ T.Page {
     contentHeight: contentItem.implicitHeight || (contentChildren.length === 1 ? contentChildren[0].implicitHeight : 0)
 
     background: Rectangle {
-        color: FishUI.Theme.backgroundColor
+        color: ThemeValues.backgroundColor
     }
 }

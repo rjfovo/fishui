@@ -19,7 +19,11 @@
 
 import QtQuick 6.0
 import QtQuick.Window 6.0
-import QtQuick.Controls 6.0
+
+// 注意：不要在此 import QtQuick.Controls 6.0。
+// 当 QT_QUICK_CONTROLS_STYLE=fish-style 时，import QtQuick.Controls 会初始化
+// QtQuick.Controls 主题系统，导致本 QtQuick.Window 的整个场景内容不上屏（窗口全透明）。
+// 本文件不使用任何 QtQuick.Controls 控件（窗口头按钮为 FishUI.Item 组件），故无需该 import。
 import QtQuick.Layouts 6.0
 import QtQuick.Shapes 1.12
 import Qt5Compat.GraphicalEffects 6.0

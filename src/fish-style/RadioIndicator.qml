@@ -22,19 +22,19 @@
 
 import QtQuick 6.0
 import QtQuick.Controls 6.0
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 Rectangle {
-    implicitWidth: FishUI.Units.iconSizes.small
-    implicitHeight: FishUI.Units.iconSizes.small
+    implicitWidth: ThemeValues.iconSizes.small
+    implicitHeight: ThemeValues.iconSizes.small
 
     property Item control
 
     radius: width / 2
-    color: control.FishUI.Theme.backgroundColor
+    color: ThemeValues.backgroundColor
     border.color: control.down
-        ? control.checked ? "transparent" : control.FishUI.Theme.highlightColor
-        : control.checked ? control.FishUI.Theme.highlightColor : control.FishUI.Theme.disabledTextColor
+        ? control.checked ? "transparent" : ThemeValues.highlightColor
+        : control.checked ? ThemeValues.highlightColor : ThemeValues.disabledTextColor
 
     border.width: 1
 
@@ -43,7 +43,7 @@ Rectangle {
         radius: parent.radius
         scale: control.checked ? 1.0 : 0.0
 
-        color: control.FishUI.Theme.highlightColor
+        color: ThemeValues.highlightColor
 
         Behavior on scale {
             NumberAnimation {

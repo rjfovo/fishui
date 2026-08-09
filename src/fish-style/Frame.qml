@@ -1,7 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.Frame {
     id: control
@@ -16,7 +16,7 @@ T.Frame {
 
     background: Rectangle {
         color: "transparent"
-        property color borderColor: FishUI.Theme.textColor
+        property color borderColor: ThemeValues.textColor
         border.color: Qt.rgba(borderColor.r, borderColor.g, borderColor.b, 0.3)
     }
 }

@@ -1,5 +1,5 @@
 import QtQuick 6.0
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 Item {
     id: indicator
@@ -8,9 +8,9 @@ Item {
 
     property Item control
     property alias handle: handle
-    property color bgColor : control.checked ? FishUI.Theme.highlightColor : Qt.rgba(FishUI.Theme.textColor.r, 
-                                                                                     FishUI.Theme.textColor.g,
-                                                                                     FishUI.Theme.textColor.b, 0.2)
+    property color bgColor : control.checked ? ThemeValues.highlightColor : Qt.rgba(ThemeValues.textColor.r, 
+                                                                                     ThemeValues.textColor.g,
+                                                                                     ThemeValues.textColor.b, 0.2)
     Rectangle {
         width: parent.width
         height: 20

@@ -22,7 +22,7 @@
 
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.DialogButtonBox {
     id: control
@@ -30,8 +30,8 @@ T.DialogButtonBox {
     implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
     implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
 
-    spacing: FishUI.Units.smallSpacing
-    padding: FishUI.Units.smallSpacing
+    spacing: ThemeValues.smallSpacing
+    padding: ThemeValues.smallSpacing
     alignment: Qt.AlignRight
 
     delegate: Button {

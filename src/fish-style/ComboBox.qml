@@ -40,7 +40,7 @@ import QtQuick.Controls 6.0
 import QtQuick.Controls.impl 6.0
 import QtQuick.Templates 6.0 as T
 import Qt5Compat.GraphicalEffects 6.0
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.ComboBox {
     id: control
@@ -51,15 +51,15 @@ T.ComboBox {
                              implicitContentHeight + topPadding + bottomPadding,
                              implicitIndicatorHeight + topPadding + bottomPadding)
 
-    topInset: FishUI.Units.smallSpacing
-    bottomInset: FishUI.Units.smallSpacing
+    topInset: ThemeValues.smallSpacing
+    bottomInset: ThemeValues.smallSpacing
 
-    spacing: FishUI.Units.smallSpacing
-    padding: FishUI.Units.smallSpacing
-    leftPadding: FishUI.Units.largeSpacing
-    rightPadding: FishUI.Units.largeSpacing
+    spacing: ThemeValues.smallSpacing
+    padding: ThemeValues.smallSpacing
+    leftPadding: ThemeValues.largeSpacing
+    rightPadding: ThemeValues.largeSpacing
 
-    property bool darkMode: FishUI.Theme.darkMode
+    property bool darkMode: ThemeValues.darkMode
 
     onDarkModeChanged: {
         updateTimer.restart()
@@ -77,7 +77,7 @@ T.ComboBox {
         x: control.mirrored ? control.leftPadding : control.width - width - control.rightPadding
         y: control.topPadding + (control.availableHeight - height) / 2
 
-        height: FishUI.Units.iconSizes.small
+        height: ThemeValues.iconSizes.small
         width: height
 
         cache: false
@@ -99,9 +99,9 @@ T.ComboBox {
     }
 
     contentItem: T.TextField {
-        padding: FishUI.Units.smallSpacing
+        padding: ThemeValues.smallSpacing
         leftPadding: 0
-        rightPadding: FishUI.Units.smallSpacing
+        rightPadding: ThemeValues.smallSpacing
 
         text: control.editable ? control.editText : control.displayText
 
@@ -112,26 +112,26 @@ T.ComboBox {
         validator: control.validator
 
         font: control.font
-        color: control.enabled ? control.FishUI.Theme.textColor : control.FishUI.Theme.highlightColor
-        selectionColor:  control.FishUI.Theme.highlightColor
-        selectedTextColor: control.FishUI.Theme.highlightedTextColor
+        color: control.enabled ? ThemeValues.textColor : ThemeValues.highlightColor
+        selectionColor:  ThemeValues.highlightColor
+        selectedTextColor: ThemeValues.highlightedTextColor
         verticalAlignment: Text.AlignVCenter
     }
 
     background: Rectangle {
-        implicitWidth:  (FishUI.Units.iconSizes.medium * 3) + FishUI.Units.largeSpacing
-        implicitHeight: FishUI.Units.iconSizes.medium + FishUI.Units.smallSpacing
+        implicitWidth:  (ThemeValues.iconSizes.medium * 3) + ThemeValues.largeSpacing
+        implicitHeight: ThemeValues.iconSizes.medium + ThemeValues.smallSpacing
 
-        radius: FishUI.Theme.smallRadius
-        color: FishUI.Theme.alternateBackgroundColor
+        radius: ThemeValues.smallRadius
+        color: ThemeValues.alternateBackgroundColor
 
-        border.color: control.activeFocus ? FishUI.Theme.highlightColor : color
+        border.color: control.activeFocus ? ThemeValues.highlightColor : color
         border.width: 1
     }
 
     popup: T.Popup {
         width: Math.max(control.width, 150)
-        implicitHeight: Math.min(contentItem.implicitHeight, control.Window.height - topMargin - bottomMargin) + FishUI.Units.largeSpacing
+        implicitHeight: Math.min(contentItem.implicitHeight, control.Window.height - topMargin - bottomMargin) + ThemeValues.largeSpacing
         transformOrigin: Item.Top
 
         enter: Transition {
@@ -160,16 +160,19 @@ T.ComboBox {
             model: control.delegateModel
             currentIndex: control.highlightedIndex
             highlightMoveDuration: 0
-            topMargin: FishUI.Units.smallSpacing
-            bottomMargin: FishUI.Units.smallSpacing
-            spacing: FishUI.Units.smallSpacing
+            topMargin: ThemeValues.smallSpacing
+            bottomMargin: ThemeValues.smallSpacing
+            spacing: ThemeValues.smallSpacing
 
             T.ScrollBar.vertical: ScrollBar {}
         }
 
         background: Rectangle {
-            radius: FishUI.Theme.smallRadius
-            color: parent.FishUI.Theme.secondBackgroundColor
+            radius: ThemeValues.smallRadius
+            // 注意：不能写成 parent.ThemeValues.secondBackgroundColor ——
+            // parent 是 popup(T.Popup)，没有 ThemeValues 属性，会抛 TypeError
+            // 导致 ComboBox 下拉框背景无法创建（控件回退异常）。直接引用 JS 模块即可。
+            color: ThemeValues.secondBackgroundColor
             border.width: 0
 
             layer.enabled: true

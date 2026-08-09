@@ -24,7 +24,7 @@ import QtQuick 6.0
 import QtQuick.Window 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.TextArea {
     id: control
@@ -38,15 +38,15 @@ T.TextArea {
 
     padding: 6
 
-    color: FishUI.Theme.textColor
-    selectionColor: FishUI.Theme.highlightColor
-    selectedTextColor: FishUI.Theme.highlightedTextColor
+    color: ThemeValues.textColor
+    selectionColor: ThemeValues.highlightColor
+    selectedTextColor: ThemeValues.highlightedTextColor
     opacity: control.enabled ? 1 : 0.6
     wrapMode: Text.WordWrap
     verticalAlignment: TextEdit.AlignTop
     hoverEnabled: false
 
-    renderType: FishUI.Theme.renderType
+    renderType: ThemeValues.renderType
 
     selectByMouse: true
 
@@ -59,7 +59,7 @@ T.TextArea {
 
         text: control.placeholderText
         font: control.font
-        color: FishUI.Theme.disabledTextColor
+        color: ThemeValues.disabledTextColor
         horizontalAlignment: control.horizontalAlignment
         verticalAlignment: control.verticalAlignment
         visible: !control.length && !control.preeditText && (!control.activeFocus || control.horizontalAlignment !== Qt.AlignHCenter)
@@ -70,6 +70,6 @@ T.TextArea {
         y: parent.height - height - control.bottomPadding / 2
         implicitWidth: 120
         height: control.activeFocus ? 2 : 1
-        color: control.FishUI.Theme.backgroundColor
+        color: ThemeValues.backgroundColor
     }
 }

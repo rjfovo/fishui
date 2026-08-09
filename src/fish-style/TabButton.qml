@@ -1,12 +1,12 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.TabButton {
     id: control
 
-    property int standardHeight: FishUI.Units.iconSizes.medium + FishUI.Units.smallSpacing
-    property color pressedColor: Qt.rgba(FishUI.Theme.textColor.r, FishUI.Theme.textColor.g, FishUI.Theme.textColor.b, 0.5)
+    property int standardHeight: ThemeValues.iconSizes.medium + ThemeValues.smallSpacing
+    property color pressedColor: Qt.rgba(ThemeValues.textColor.r, ThemeValues.textColor.g, ThemeValues.textColor.b, 0.5)
 
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                             contentItem.implicitWidth + leftPadding + rightPadding)
@@ -24,6 +24,6 @@ T.TabButton {
 
         text: control.text
         font: control.font
-        color: !control.enabled ? FishUI.Theme.disabledTextColor : control.pressed ? pressedColor : control.checked ? FishUI.Theme.textColor : FishUI.Theme.textColor
+        color: !control.enabled ? ThemeValues.disabledTextColor : control.pressed ? pressedColor : control.checked ? ThemeValues.textColor : ThemeValues.textColor
     }
 }

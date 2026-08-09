@@ -1,12 +1,12 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
 import Qt5Compat.GraphicalEffects 6.0
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.TabBar {
     id: control
 
-    implicitWidth: Math.max(background.implicitWidth, contentItem.implicitWidth + FishUI.Units.smallSpacing)
+    implicitWidth: Math.max(background.implicitWidth, contentItem.implicitWidth + ThemeValues.smallSpacing)
     implicitHeight: contentItem.implicitHeight
 
     spacing: 0
@@ -37,11 +37,11 @@ T.TabBar {
                     fill: parent
                     margins: 2
                 }
-                color: FishUI.Theme.darkMode ? Qt.lighter(FishUI.Theme.secondBackgroundColor, 2)
-                                             : FishUI.Theme.secondBackgroundColor
-                radius: FishUI.Theme.smallRadius
+                color: ThemeValues.darkMode ? Qt.lighter(ThemeValues.secondBackgroundColor, 2)
+                                             : ThemeValues.secondBackgroundColor
+                radius: ThemeValues.smallRadius
 
-                layer.enabled: FishUI.Theme.darkMode
+                layer.enabled: ThemeValues.darkMode
                 layer.effect: DropShadow {
                     transparentBorder: true
                     radius: 2
@@ -55,7 +55,7 @@ T.TabBar {
     }
 
     background: Rectangle {
-        color: FishUI.Theme.alternateBackgroundColor
-        radius: FishUI.Theme.smallRadius + 2
+        color: ThemeValues.alternateBackgroundColor
+        radius: ThemeValues.smallRadius + 2
     }
 }

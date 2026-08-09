@@ -1,7 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Window 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.Label {
     id: control
@@ -12,19 +12,19 @@ T.Label {
     // Text.NativeRendering is broken on non integer pixel ratios
     // renderType: Window.devicePixelRatio % 1 !== 0 ? Text.QtRendering : Text.NativeRendering
 
-    renderType: FishUI.Theme.renderType
+    renderType: ThemeValues.renderType
 
-    font.capitalization: FishUI.Theme.defaultFont.capitalization
-    font.family: FishUI.Theme.fontFamily
-    font.italic: FishUI.Theme.defaultFont.italic
-    font.letterSpacing: FishUI.Theme.defaultFont.letterSpacing
-    font.pointSize: FishUI.Theme.fontSize
-    font.strikeout: FishUI.Theme.defaultFont.strikeout
-    font.underline: FishUI.Theme.defaultFont.underline
-    font.weight: FishUI.Theme.defaultFont.weight
-    font.wordSpacing: FishUI.Theme.defaultFont.wordSpacing
-    color: FishUI.Theme.textColor
-    linkColor: FishUI.Theme.linkColor
+    font.capitalization: ThemeValues.defaultFont.capitalization
+    font.family: ThemeValues.fontFamily
+    font.italic: ThemeValues.defaultFont.italic
+    font.letterSpacing: ThemeValues.defaultFont.letterSpacing
+    font.pointSize: ThemeValues.fontSize
+    font.strikeout: ThemeValues.defaultFont.strikeout
+    font.underline: ThemeValues.defaultFont.underline
+    font.weight: ThemeValues.defaultFont.weight
+    font.wordSpacing: ThemeValues.defaultFont.wordSpacing
+    color: ThemeValues.textColor
+    linkColor: ThemeValues.linkColor
 
     opacity: enabled ? 1 : 0.6
 

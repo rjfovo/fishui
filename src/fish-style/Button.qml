@@ -20,43 +20,43 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
 import Qt5Compat.GraphicalEffects 6.0
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 import QtQuick.Controls.impl 6.0
 
 T.Button {
     id: control
-    implicitWidth: Math.max(background.implicitWidth, contentItem.implicitWidth + FishUI.Units.largeSpacing)
+    implicitWidth: Math.max(background.implicitWidth, contentItem.implicitWidth + ThemeValues.largeSpacing)
     implicitHeight: background.implicitHeight
     hoverEnabled: true
 
-    icon.width: FishUI.Units.iconSizes.small
-    icon.height: FishUI.Units.iconSizes.small
+    icon.width: ThemeValues.iconSizes.small
+    icon.height: ThemeValues.iconSizes.small
 
-    icon.color: control.enabled ? (control.highlighted ? control.FishUI.Theme.highlightColor : control.FishUI.Theme.textColor) : control.FishUI.Theme.disabledTextColor
-    spacing: FishUI.Units.smallSpacing
+    icon.color: control.enabled ? (control.highlighted ? ThemeValues.highlightColor : ThemeValues.textColor) : ThemeValues.disabledTextColor
+    spacing: ThemeValues.smallSpacing
 
-    property color hoveredColor: FishUI.Theme.darkMode ? Qt.lighter(FishUI.Theme.alternateBackgroundColor, 1.2)
-                                                       : Qt.darker(FishUI.Theme.alternateBackgroundColor, 1.1)
+    property color hoveredColor: ThemeValues.darkMode ? Qt.lighter(ThemeValues.alternateBackgroundColor, 1.2)
+                                                       : Qt.darker(ThemeValues.alternateBackgroundColor, 1.1)
 
-    property color pressedColor: FishUI.Theme.darkMode ? Qt.lighter(FishUI.Theme.alternateBackgroundColor, 1.1)
-                                                       : Qt.darker(FishUI.Theme.alternateBackgroundColor, 1.2)
+    property color pressedColor: ThemeValues.darkMode ? Qt.lighter(ThemeValues.alternateBackgroundColor, 1.1)
+                                                       : Qt.darker(ThemeValues.alternateBackgroundColor, 1.2)
 
-    property color borderColor: Qt.rgba(FishUI.Theme.highlightColor.r,
-                                        FishUI.Theme.highlightColor.g,
-                                        FishUI.Theme.highlightColor.b, 0.5)
+    property color borderColor: Qt.rgba(ThemeValues.highlightColor.r,
+                                        ThemeValues.highlightColor.g,
+                                        ThemeValues.highlightColor.b, 0.5)
 
-    property color flatHoveredColor: Qt.rgba(FishUI.Theme.highlightColor.r,
-                                             FishUI.Theme.highlightColor.g,
-                                             FishUI.Theme.highlightColor.b, 0.2)
-    property color flatPressedColor: Qt.rgba(FishUI.Theme.highlightColor.r,
-                                             FishUI.Theme.highlightColor.g,
-                                             FishUI.Theme.highlightColor.b, 0.25)
+    property color flatHoveredColor: Qt.rgba(ThemeValues.highlightColor.r,
+                                             ThemeValues.highlightColor.g,
+                                             ThemeValues.highlightColor.b, 0.2)
+    property color flatPressedColor: Qt.rgba(ThemeValues.highlightColor.r,
+                                             ThemeValues.highlightColor.g,
+                                             ThemeValues.highlightColor.b, 0.25)
 
     contentItem: IconLabel {
         text: control.text
         font: control.font
         icon: control.icon
-        color: !control.enabled ? control.FishUI.Theme.disabledTextColor : control.flat ? FishUI.Theme.highlightColor : FishUI.Theme.textColor
+        color: !control.enabled ? ThemeValues.disabledTextColor : control.flat ? ThemeValues.highlightColor : ThemeValues.textColor
         spacing: control.spacing
         mirrored: control.mirrored
         display: control.display
@@ -64,21 +64,21 @@ T.Button {
     }
 
     background: Item {
-        implicitWidth: (FishUI.Units.iconSizes.medium * 3) + FishUI.Units.largeSpacing
-        implicitHeight: FishUI.Units.iconSizes.medium + FishUI.Units.smallSpacing
+        implicitWidth: (ThemeValues.iconSizes.medium * 3) + ThemeValues.largeSpacing
+        implicitHeight: ThemeValues.iconSizes.medium + ThemeValues.smallSpacing
 
         Rectangle {
             id: _flatBackground
             anchors.fill: parent
-            radius: FishUI.Theme.mediumRadius
+            radius: ThemeValues.mediumRadius
             border.width: 1
-            border.color: control.enabled ? control.activeFocus ? FishUI.Theme.highlightColor : "transparent"
+            border.color: control.enabled ? control.activeFocus ? ThemeValues.highlightColor : "transparent"
                                           : "transparent"
             visible: control.flat
 
             color: {
                 if (!control.enabled)
-                    return FishUI.Theme.alternateBackgroundColor
+                    return ThemeValues.alternateBackgroundColor
 
                 if (control.pressed)
                     return control.flatPressedColor
@@ -86,24 +86,24 @@ T.Button {
                 if (control.hovered)
                     return control.flatHoveredColor
 
-                return Qt.rgba(FishUI.Theme.highlightColor.r,
-                               FishUI.Theme.highlightColor.g,
-                               FishUI.Theme.highlightColor.b, 0.1)
+                return Qt.rgba(ThemeValues.highlightColor.r,
+                               ThemeValues.highlightColor.g,
+                               ThemeValues.highlightColor.b, 0.1)
             }
         }
 
         Rectangle {
             id: _background
             anchors.fill: parent
-            radius: FishUI.Theme.mediumRadius
+            radius: ThemeValues.mediumRadius
             border.width: 1
             visible: !control.flat
-            border.color: control.enabled ? control.activeFocus ? FishUI.Theme.highlightColor : "transparent"
+            border.color: control.enabled ? control.activeFocus ? ThemeValues.highlightColor : "transparent"
                                           : "transparent"
 
             color: {
                 if (!control.enabled)
-                    return FishUI.Theme.alternateBackgroundColor
+                    return ThemeValues.alternateBackgroundColor
 
                 if (control.pressed)
                     return control.pressedColor
@@ -111,7 +111,7 @@ T.Button {
                 if (control.hovered)
                     return control.hoveredColor
 
-                return FishUI.Theme.alternateBackgroundColor
+                return ThemeValues.alternateBackgroundColor
             }
         }
     }

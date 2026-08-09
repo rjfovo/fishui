@@ -1,7 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.RadioDelegate {
     id: control
@@ -13,12 +13,12 @@ T.RadioDelegate {
                                       indicator ? indicator.implicitHeight : 0) + topPadding + bottomPadding)
     baselineOffset: contentItem.y + contentItem.baselineOffset
 
-    topPadding: control.FishUI.Units.smallSpacing
-    bottomPadding: control.FishUI.Units.smallSpacing
-    leftPadding: control.FishUI.Units.smallSpacing
-    rightPadding: control.FishUI.Units.smallSpacing
+    topPadding: ThemeValues.smallSpacing
+    bottomPadding: ThemeValues.smallSpacing
+    leftPadding: ThemeValues.smallSpacing
+    rightPadding: ThemeValues.smallSpacing
 
-    spacing: control.FishUI.Units.smallSpacing
+    spacing: ThemeValues.smallSpacing
 
     opacity: control.enabled ? 1.0 : 0.5
 
@@ -28,7 +28,7 @@ T.RadioDelegate {
 
         text: control.text
         font: control.font
-        color: FishUI.Theme.textColor
+        color: ThemeValues.textColor
 
         elide: Text.ElideRight
         visible: control.text

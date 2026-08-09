@@ -24,13 +24,13 @@ import QtQuick 6.0
 import Qt5Compat.GraphicalEffects 6.0
 import QtQuick.Controls 6.0 as Controls
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.ToolTip {
     id: controlRoot
 
     x: parent ? (parent.width - implicitWidth) / 2 : 0
-    y: -implicitHeight - FishUI.Units.smallSpacing * 1.5
+    y: -implicitHeight - ThemeValues.smallSpacing * 1.5
 
     implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
     implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
@@ -43,13 +43,13 @@ T.ToolTip {
     contentItem: Controls.Label {
         text: controlRoot.text
         font: controlRoot.font
-        color: FishUI.Theme.textColor
+        color: ThemeValues.textColor
     }
 
     background: Rectangle {
         opacity: 0.95
-        color: FishUI.Theme.secondBackgroundColor
-        radius: FishUI.Theme.smallRadius
+        color: ThemeValues.secondBackgroundColor
+        radius: ThemeValues.smallRadius
 
         layer.enabled: true
         layer.effect: DropShadow {

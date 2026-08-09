@@ -38,17 +38,17 @@ import QtQuick 6.0
 import QtQuick.Controls 6.0
 import QtQuick.Controls.impl 6.0
 
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 Rectangle {
     id: indicatorItem
     implicitWidth: 18
     implicitHeight: 18
 
-    color: !control.enabled ? control.FishUI.Theme.secondBackgroundColor
-                            : checked ? FishUI.Theme.highlightColor : control.FishUI.Theme.secondBackgroundColor
-    border.color: !control.enabled ? control.FishUI.Theme.disabledTextColor
-        : checked ? control.FishUI.Theme.highlightColor: control.FishUI.Theme.textColor
+    color: !control.enabled ? ThemeValues.secondBackgroundColor
+                            : checked ? ThemeValues.highlightColor : ThemeValues.secondBackgroundColor
+    border.color: !control.enabled ? ThemeValues.disabledTextColor
+        : checked ? ThemeValues.highlightColor: ThemeValues.textColor
     border.width: 1
     radius: control.autoExclusive ? Math.min(height, width) : 4
 

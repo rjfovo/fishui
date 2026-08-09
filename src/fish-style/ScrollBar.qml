@@ -1,7 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
 import QtQuick.Controls.Material 2.12
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.ScrollBar {
     id: control
@@ -22,12 +22,12 @@ T.ScrollBar {
     }
 
     contentItem: Rectangle {
-        radius: FishUI.Theme.smallRadius
+        radius: ThemeValues.smallRadius
         implicitWidth: control.interactive ? 6 : 4
         implicitHeight: control.interactive ? 6 : 4
 
-        color: control.pressed ? FishUI.Theme.darkMode ? Qt.rgba(255, 255, 255, 0.4) : Qt.rgba(0, 0, 0, 0.5)
-                               : FishUI.Theme.darkMode ? Qt.rgba(255, 255, 255, 0.5) : Qt.rgba(0, 0, 0, 0.4)
+        color: control.pressed ? ThemeValues.darkMode ? Qt.rgba(255, 255, 255, 0.4) : Qt.rgba(0, 0, 0, 0.5)
+                               : ThemeValues.darkMode ? Qt.rgba(255, 255, 255, 0.5) : Qt.rgba(0, 0, 0, 0.4)
         opacity: 0.0
     }
 

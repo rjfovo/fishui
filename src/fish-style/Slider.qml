@@ -1,7 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
 import Qt5Compat.GraphicalEffects 6.0
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.Slider {
     id: control
@@ -53,7 +53,7 @@ T.Slider {
             width: control.horizontal ? parent.width : sliderTrackHeight
             height: !control.horizontal ? parent.height : sliderTrackHeight
             radius: !control.horizontal ? parent.width / 2 : sliderTrackHeight / 2
-            color: FishUI.Theme.darkMode ? Qt.rgba(255, 255, 255, 0.5) : Qt.rgba(0, 0, 0, 0.1)
+            color: ThemeValues.darkMode ? Qt.rgba(255, 255, 255, 0.5) : Qt.rgba(0, 0, 0, 0.1)
         }
 
         Rectangle {
@@ -62,7 +62,7 @@ T.Slider {
             width: control.horizontal ? control.position * parent.width : sliderTrackHeight
             height: !control.horizontal ? control.position * parent.height : sliderTrackHeight
             radius: !control.horizontal ? parent.width / 2 : sliderTrackHeight / 2
-            color: control.FishUI.Theme.highlightColor
+            color: ThemeValues.highlightColor
         }
     }
 }

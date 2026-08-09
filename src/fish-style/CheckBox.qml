@@ -21,7 +21,7 @@
 
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
-import FishUI 1.0 as FishUI
+import "ThemeValues.js" as ThemeValues
 
 T.CheckBox {
     id: controlRoot
@@ -34,7 +34,7 @@ T.CheckBox {
     baselineOffset: contentItem.y + contentItem.baselineOffset
 
     padding: 1
-    spacing: FishUI.Units.smallSpacing
+    spacing: ThemeValues.smallSpacing
 
     hoverEnabled: true
 
@@ -43,13 +43,13 @@ T.CheckBox {
     }
 
 //    indicator: Item {
-//        width: FishUI.Units.iconSizes.smallMedium + FishUI.Units.smallSpacing
-//        height: FishUI.Units.iconSizes.smallMedium + FishUI.Units.smallSpacing
+//        width: ThemeValues.iconSizes.smallMedium + ThemeValues.smallSpacing
+//        height: ThemeValues.iconSizes.smallMedium + ThemeValues.smallSpacing
 
 //        CheckIndicator {
 //            anchors.centerIn: parent
-//            width: FishUI.Units.iconSizes.smallMedium
-//            height: FishUI.Units.iconSizes.smallMedium
+//            width: ThemeValues.iconSizes.smallMedium
+//            height: ThemeValues.iconSizes.smallMedium
 //            control: controlRoot
 //        }
 //    }
@@ -64,6 +64,6 @@ T.CheckBox {
         visible: controlRoot.text
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
-        color: FishUI.Theme.textColor
+        color: ThemeValues.textColor
     }
 }
