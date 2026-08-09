@@ -1,6 +1,7 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
 import QtQuick.Controls 6.0
+import Qt5Compat.GraphicalEffects 6.0
 
 // 注意：本文件是 QtQuick.Controls 的 fish-style 主题实现（由 QT_QUICK_CONTROLS_STYLE=FishUI 激活）。
 // 禁止 `import FishUI` —— FishUI 模块 qmldir 声明了 `depends QtQuick.Controls`，
@@ -80,10 +81,22 @@ T.MenuItem
             id: menuIcon
             width: 16
             height: 16
+            // 必须显式设置 sourceSize：否则 QQuickImageProvider 收到无效请求尺寸
+            // 返回 1x1 pixmap，拉伸成实心灰块（菜单图标显示为空白）。
+            sourceSize: Qt.size(16, 16)
             visible: control.icon && control.icon.source ? control.icon.source.toString().length > 0 : false
             source: control.icon && control.icon.source ? control.icon.source : ""
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
+        }
+
+        // 统一菜单图标为文字色（随明暗主题自适应）
+        ColorOverlay {
+            anchors.fill: menuIcon
+            source: menuIcon
+            color: control.textColor
+            visible: menuIcon.visible
+            cached: true
         }
 
         Text {

@@ -20,6 +20,7 @@
 import QtQuick 6.0
 import QtQuick.Controls 6.0 as T
 import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects 6.0
 
 // 统一菜单项：与 FishUI.DesktopMenu 配合使用。
 // Cutefish 右键菜单统一风格设计：
@@ -100,10 +101,24 @@ T.MenuItem {
             id: menuIcon
             width: 16
             height: 16
+            // 必须显式设置 sourceSize：否则 QQuickImageProvider 收到的请求尺寸无效
+            // （被 provider 钳成 1x1），返回的 1x1 pixmap 拉伸成 16x16 实心灰块，
+            // 表现为"菜单图标是空的"。
+            sourceSize: Qt.size(16, 16)
             visible: control.icon && control.icon.source ? control.icon.source.toString().length > 0 : false
             source: control.icon && control.icon.source ? control.icon.source : ""
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
+        }
+
+        // 统一菜单图标为文字色：随明暗主题自适应（浅色主题深图标、深色主题浅图标），
+        // 保持整套菜单风格统一（macOS/Windows11 风格的单色菜单图标）。
+        ColorOverlay {
+            anchors.fill: menuIcon
+            source: menuIcon
+            color: control.textColor
+            visible: menuIcon.visible
+            cached: true
         }
 
         Text {
