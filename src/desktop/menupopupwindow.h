@@ -42,7 +42,13 @@ public:
 
 public slots:
     Q_INVOKABLE void show();
-    Q_INVOKABLE void popup(int x, int y);
+    // 注意：方法名不能用 popup/popupAt —— DesktopMenu.qml 里定义的 QML 函数
+    // popup()（无参，弹到鼠标处）与 popupAt()（指定位置）会遮蔽同名 C++ 槽，
+    // 导致 popupAt() 内部调用 control.popupAt(x, y) 时实际执行的是 QML 自身（递归）。
+    Q_INVOKABLE void showAt(int x, int y);
+    // 供子菜单使用：把子菜单的 transient parent 设为父菜单窗口，
+    // 这样 showAt() 在贴近屏幕右缘时会自动翻转到父菜单左侧，而不是被钳制到屏幕边缘。
+    Q_INVOKABLE void setParentMenu(QQuickWindow *parentMenu);
     Q_INVOKABLE void dismissPopup();
     Q_INVOKABLE void updateGeometry();
 

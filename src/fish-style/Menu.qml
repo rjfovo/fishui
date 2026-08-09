@@ -13,7 +13,7 @@ T.Menu
     id: control
 
     readonly property bool isDark: Qt.styleHints.colorScheme === Qt.ColorScheme.Dark
-    readonly property color menuBackgroundColor: isDark ? "#1C1C1D" : "#F3F4F9"
+    readonly property color menuBackgroundColor: isDark ? "#1E1E20" : "#FFFFFF"
 
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
                             contentWidth + leftPadding + rightPadding)
@@ -21,8 +21,9 @@ T.Menu
                              contentHeight + topPadding + bottomPadding)
 
     margins: 0
+    padding: 6
     verticalPadding: 6
-    spacing: 6
+    spacing: 0
     transformOrigin: !cascade ? Item.Top : (mirrored ? Item.TopRight : Item.TopLeft)
 
     delegate: MenuItem { }
@@ -44,13 +45,6 @@ T.Menu
             to: 0
             easing.type: Easing.InOutCubic
             duration: 200
-        }
-    }
-
-    Overlay.modal: Item {
-        Rectangle {
-            anchors.fill: parent
-            color: 'transparent'
         }
     }
 
@@ -78,7 +72,7 @@ T.Menu
         layer.enabled: true
         layer.effect: OpacityMask {
             maskSource: Rectangle {
-                radius: 14
+                radius: 10
                 width: menuListView.width
                 height: menuListView.height
             }
@@ -88,26 +82,25 @@ T.Menu
     }
 
     background: Item {
-        // 替代 FishUI.RoundedRect：圆角背景 + 边框 + 阴影
         Rectangle {
             id: menuBackground
             anchors.fill: parent
             color: control.menuBackgroundColor
-            radius: 14
+            radius: 10
             antialiasing: true
 
             border.width: 1
-            border.color: control.isDark ? Qt.rgba(255, 255, 255, 0.1) : Qt.rgba(0, 0, 0, 0.1)
+            border.color: control.isDark ? Qt.rgba(255, 255, 255, 0.15) : Qt.rgba(0, 0, 0, 0.12)
         }
 
         layer.enabled: true
         layer.effect: DropShadow {
             transparentBorder: true
-            radius: 32
-            samples: 32
+            radius: 24
+            samples: 24
             horizontalOffset: 0
             verticalOffset: 0
-            color: Qt.rgba(0, 0, 0, 0.11)
+            color: Qt.rgba(0, 0, 0, 0.15)
         }
     }
 
@@ -135,3 +128,4 @@ T.Menu
         }
     }
 }
+

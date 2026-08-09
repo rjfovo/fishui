@@ -1,123 +1,126 @@
 import QtQuick 6.0
 import QtQuick.Templates 6.0 as T
 import QtQuick.Controls 6.0
-import QtQuick.Controls.impl 6.0
 
 // 注意：本文件是 QtQuick.Controls 的 fish-style 主题实现（由 QT_QUICK_CONTROLS_STYLE=FishUI 激活）。
 // 禁止 `import FishUI` —— FishUI 模块 qmldir 声明了 `depends QtQuick.Controls`，
 // 主题文件再 import FishUI 会形成“QtQuick.Controls(fish-style) → FishUI → QtQuick.Controls”循环依赖，
 // 导致 FishUI.MenuItem 等类型解析失败（桌面图标层 Main.qml 因此编译失败、整屏黑）。
 // 此处改用 Qt 标准 API（palette / styleHints / 常量）实现同等外观。
+//
+// 与 FishUI.DesktopMenu/FishUI.MenuItem 保持同一套设计语言：
+// 行高 30px、圆角胶囊高亮（上下内缩 2px）、文字 14px 垂直居中、
+// 勾选标记主题色、子菜单箭头右对齐。
 
 T.MenuItem
 {
     id: control
 
-    FontMetrics {
-        id: fm
-    }
-
     readonly property bool isDark: Qt.styleHints.colorScheme === Qt.ColorScheme.Dark
 
     // 文字颜色使用硬编码（与 ThemeValues.textColor/disabledTextColor 一致）：
-    // 菜单由独立的 MenuPopupWindow(QQuickWindow) 承载，其 palette 可能未正确初始化
-    // （palette.text 不可见，导致菜单项文字不显示），不能依赖 palette。
-    readonly property color textColor: isDark ? "#FFFFFF" : "#323238"
-    readonly property color disabledTextColor: isDark ? "#888888" : "#64646E"
+    // 菜单由独立的 PopupWindow 承载，其 palette 可能未正确初始化。
+    readonly property color textColor: isDark ? "#F2F3F5" : "#313136"
+    readonly property color disabledTextColor: isDark ? "#7A7A84" : "#A6A6B0"
+    readonly property color accentColor: isDark ? "#7FC2FF" : "#0176D3"
 
-    property color hoveredColor: isDark ? Qt.rgba(255, 255, 255, 0.2)
-                                        : Qt.rgba(0, 0, 0, 0.1)
-    property color pressedColor: isDark ? Qt.rgba(255, 255, 255, 0.1)
-                                        : Qt.rgba(0, 0, 0, 0.2)
+    property color hoveredColor: isDark ? Qt.rgba(255, 255, 255, 0.08)
+                                        : Qt.rgba(0, 0, 0, 0.06)
+    property color highlightedColor: isDark ? Qt.rgba(255, 255, 255, 0.12)
+                                            : Qt.rgba(0, 0, 0, 0.08)
+    property color pressedColor: isDark ? Qt.rgba(255, 255, 255, 0.16)
+                                        : Qt.rgba(0, 0, 0, 0.12)
 
-    implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
-                            implicitContentWidth + leftPadding + rightPadding)
-    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
-                             implicitContentHeight + topPadding + bottomPadding,
-                             implicitIndicatorHeight + topPadding + bottomPadding)
+    implicitWidth: {
+        var w = 0
+        if (control.checkable)
+            w += 18
+        if (control.icon && control.icon.source)
+            w += 16 + 8
+        w += textMetrics.advanceWidth
+        if (control.subMenu)
+            w += 14
+        return Math.max(150, w) + control.leftPadding + control.rightPadding
+    }
 
-    verticalPadding: 6
+    implicitHeight: 30
+
+    TextMetrics {
+        id: textMetrics
+        text: control.text
+        font: control.font
+    }
+
+    padding: 0
+    leftPadding: 8
+    rightPadding: 8
+    topPadding: 0
+    bottomPadding: 0
     hoverEnabled: true
-    topPadding: 6
-    bottomPadding: 6
 
-    icon.width: 32
-    icon.height: 32
-
-    icon.color: control.enabled ? (control.highlighted ? control.palette.highlight : control.textColor) :
-                             control.disabledTextColor
-
-    // 内容：图标 + 文字 + 子菜单箭头
-    // 注意：不能使用 QtQuick.Controls.impl 的 IconLabel —— 在软件渲染后端
-    // （QT_QUICK_BACKEND=software）下其文字（QQuickIconLabel）不渲染（菜单显示为空白），
-    // 改用纯 QML 元素（Image/Text），软件渲染后端绘制正常。
-    contentItem: Row {
-        readonly property real arrowPadding: control.subMenu && control.arrow ? 12 : 0
-        readonly property real indicatorPadding: control.checkable && control.indicator ? 12 : 0
+    // 圆角胶囊高亮背景（上下内缩 2px，左右由菜单内边距留白）
+    background: Rectangle {
+        radius: 7
+        color: control.pressed ? control.pressedColor
+               : control.highlighted ? control.highlightedColor
+               : control.hovered ? control.hoveredColor
+               : "transparent"
 
         anchors.left: parent.left
-        anchors.leftMargin: indicatorPadding + 6
         anchors.right: parent.right
-        anchors.rightMargin: arrowPadding + 6
+        anchors.top: parent.top
+        anchors.topMargin: 2
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 2
+    }
 
-        spacing: 6
-        layoutDirection: control.mirrored ? Qt.RightToLeft : Qt.LeftToRight
-
+    // 内容：勾选标记 + 图标 + 文字
+    contentItem: Item {
         Image {
+            id: menuIcon
             width: 16
             height: 16
-            anchors.verticalCenter: parent.verticalCenter
+            visible: control.icon && control.icon.source ? control.icon.source.toString().length > 0 : false
             source: control.icon && control.icon.source ? control.icon.source : ""
-            visible: control.icon && control.icon.source.toString().length > 0
-        }
-
-        Canvas {
-            id: menuTextCanvas
-            width: 150
-            height: 18
+            anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-
-            property string label: control.text
-            property color textColor: control.enabled ? control.textColor : control.disabledTextColor
-
-            onLabelChanged: requestPaint()
-            onTextColorChanged: requestPaint()
-
-            onPaint: {
-                var ctx = getContext("2d")
-                ctx.clearRect(0, 0, width, height)
-                ctx.fillStyle = textColor
-                ctx.font = "14px sans-serif"
-                ctx.textBaseline = "middle"
-                ctx.textAlign = "left"
-                ctx.fillText(label, 0, height / 2)
-            }
         }
-
-        Item { width: 1; height: 1; visible: false }
 
         Text {
-            visible: control.subMenu
-            text: "\u203A"
-            font.pointSize: 10
+            id: checkMark
+            visible: control.checkable && control.checked
+            text: "\u2713"
+            font.pixelSize: 12
+            font.bold: true
+            color: control.accentColor
+            anchors.left: menuIcon.visible ? menuIcon.right : parent.left
+            anchors.leftMargin: menuIcon.visible ? 8 : 0
+            anchors.verticalCenter: parent.verticalCenter
+            width: 18
+        }
+
+        Text {
+            id: menuText
+            text: control.text
+            font: control.font
             color: control.enabled ? control.textColor : control.disabledTextColor
+            elide: Text.ElideRight
+            anchors.left: checkMark.visible ? checkMark.right : menuIcon.visible ? menuIcon.right : parent.left
+            anchors.leftMargin: checkMark.visible ? 2 : menuIcon.visible ? 8 : 0
+            anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
         }
     }
 
-    background: Rectangle {
-        implicitWidth: 200
-        implicitHeight: control.visible ? fm.height + 12 : 0
-        // 与菜单背景（hugeRadius）保持一致，避免首/末项高亮出现直角角
-        radius: 14
-        opacity: 1
-
-        anchors {
-            fill: parent
-            leftMargin: 6
-            rightMargin: 6
-        }
-
-        color: control.pressed || highlighted ? control.pressedColor : control.hovered ? control.hoveredColor : "transparent"
+    // 子菜单箭头：右对齐，垂直居中
+    arrow: Text {
+        visible: control.subMenu
+        text: "\u203A"
+        color: control.enabled ? control.textColor : control.disabledTextColor
+        opacity: 0.7
+        font.pixelSize: 16
+        x: control.width - control.rightPadding - width - 2
+        y: (control.height - height) / 2
     }
 }
+

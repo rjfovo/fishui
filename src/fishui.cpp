@@ -42,6 +42,13 @@ void FishUI::initializeEngine(QQmlEngine *engine, const char *uri)
 
     // For system icons
     engine->addImageProvider(QStringLiteral("icontheme"), new IconThemeProvider());
+
+    // 强制 Qt Quick Controls 使用 fish-style 主题：
+    // cutefish-session 设置了 QT_STYLE_OVERRIDE=cutefish，而 QQuickStyle 解析时
+    // 优先使用 QGuiApplicationPrivate::styleOverride（来自 QT_STYLE_OVERRIDE），
+    // 导致所有 QML 应用的 Qt Quick Controls 走“cutefish”这个不存在的 QML 样式模块，
+    // 最终回退到 Basic（看起来就是“默认 demo 样式”）。这里显式指定样式，优先级更高。
+    QQuickStyle::setStyle(QStringLiteral("fish-style"));
 }
 
 void FishUI::registerTypes(const char *uri)
@@ -86,6 +93,7 @@ void FishUI::registerTypes(const char *uri)
     qmlRegisterType(componentUrl(QStringLiteral("RoundImageButton.qml")), uri, 1, 0, "RoundImageButton");
     qmlRegisterType(componentUrl(QStringLiteral("DesktopMenu.qml")), uri, 1, 0, "DesktopMenu");
     qmlRegisterType(componentUrl(QStringLiteral("MenuItem.qml")), uri, 1, 0, "MenuItem");
+    qmlRegisterType(componentUrl(QStringLiteral("MenuSeparator.qml")), uri, 1, 0, "MenuSeparator");
 
     qmlProtectModule(uri, 1);
 }

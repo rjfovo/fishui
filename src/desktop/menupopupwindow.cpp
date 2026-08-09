@@ -53,14 +53,17 @@ void MenuPopupWindow::applicationStateChanged(Qt::ApplicationState state)
 void MenuPopupWindow::show()
 {
     QPoint pos = QCursor::pos();
-    popup(pos.x(), pos.y());
+    showAt(pos.x(), pos.y());
 }
 
-void MenuPopupWindow::popup(int x, int y)
+void MenuPopupWindow::showAt(int x, int y)
 {
     const int margin = 6;
+    // 窗口尺寸直接取自 QML 内容容器（DesktopMenu 已在 recompute() 中把
+    // implicitWidth/implicitHeight 算为「可见内容 + 四周 6px 内边距」），
+    // 不再额外 +16px —— 原先的 +16 会在菜单底部留下不对称的空白。
     int w = m_contentItem->implicitWidth();
-    int h = m_contentItem->implicitHeight() + 16;
+    int h = m_contentItem->implicitHeight();
     int posx = x;
     int posy = y;
     QWindow *pw = transientParent();
@@ -110,6 +113,12 @@ void MenuPopupWindow::closeAllMenus()
     }
 }
 
+void MenuPopupWindow::setParentMenu(QQuickWindow *parentMenu)
+{
+    if (parentMenu)
+        setTransientParent(parentMenu);
+}
+
 void MenuPopupWindow::setParentItem(QQuickItem *item)
 {
     m_parentItem = item;
@@ -143,7 +152,7 @@ void MenuPopupWindow::dismissPopup()
 void MenuPopupWindow::updateGeometry()
 {
     int w = m_contentItem->implicitWidth();
-    int h = m_contentItem->implicitHeight() + 16;
+    int h = m_contentItem->implicitHeight();
     int posx = geometry().x();
     int posy = geometry().y();
 
