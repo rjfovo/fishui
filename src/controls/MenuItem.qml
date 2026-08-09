@@ -111,13 +111,14 @@ T.MenuItem {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        // 统一菜单图标为文字色：随明暗主题自适应（浅色主题深图标、深色主题浅图标），
-        // 保持整套菜单风格统一（macOS/Windows11 风格的单色菜单图标）。
+        // 图标着色：仅在调用方显式设置 icon.color 时启用（如 dock 的单色线条自定义图标）。
+        // 不设置 icon.color（默认 transparent）时保留图标原色——彩色主题图标（folder-new、
+        // edit-paste 等）经 image://icontheme 加载后应保持主题配色，不做黑白化。
         ColorOverlay {
             anchors.fill: menuIcon
             source: menuIcon
-            color: control.textColor
-            visible: menuIcon.visible
+            color: control.icon && control.icon.color.a > 0 ? control.icon.color : control.textColor
+            visible: menuIcon.visible && control.icon && control.icon.color.a > 0
             cached: true
         }
 

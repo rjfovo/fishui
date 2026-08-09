@@ -90,12 +90,13 @@ T.MenuItem
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        // 统一菜单图标为文字色（随明暗主题自适应）
+        // 图标着色：仅在调用方显式设置 icon.color 时启用（单色线条自定义图标）。
+        // 不设置时保留图标原色（彩色主题图标）。
         ColorOverlay {
             anchors.fill: menuIcon
             source: menuIcon
-            color: control.textColor
-            visible: menuIcon.visible
+            color: control.icon && control.icon.color.a > 0 ? control.icon.color : control.textColor
+            visible: menuIcon.visible && control.icon && control.icon.color.a > 0
             cached: true
         }
 
