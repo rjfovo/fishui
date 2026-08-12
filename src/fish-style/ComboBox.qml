@@ -101,28 +101,20 @@ T.ComboBox {
         }
     }
 
-    contentItem: T.TextField {
-        padding: ThemeValues.smallSpacing
-        leftPadding: 0
-        rightPadding: ThemeValues.smallSpacing
-
+    contentItem: Text {
+        // 用 Text 而非 TextField：TextField 在非 editable 场景下 implicitWidth 计算为 0,
+        // 导致控件宽度只按背景计算、文字被裁剪显示不全。Text 的 implicitWidth 按文字
+        // 正常度量，ComboBox 宽度随文字自适应。
         text: control.editable ? control.editText : control.displayText
-
-        enabled: control.editable
-        autoScroll: control.editable
-        readOnly: control.down
-        // 只读显示用，不捕获鼠标点击（否则点击被 TextField 吞掉，
-        // ComboBox 收不到 TapHandler 事件，下拉列表打不开）
-        activeFocusOnPress: false
-        cursorVisible: false
-        inputMethodHints: control.inputMethodHints
-        validator: control.validator
-
         font: control.font
         color: control.enabled ? ThemeValues.textColor : ThemeValues.highlightColor
-        selectionColor:  ThemeValues.highlightColor
-        selectedTextColor: ThemeValues.highlightedTextColor
         verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignLeft
+        elide: Text.ElideRight
+        leftPadding: 0
+        rightPadding: ThemeValues.smallSpacing
+        // 不捕获鼠标点击, 让 ComboBox 的 TapHandler 正常接收
+        activeFocusOnPress: false
     }
 
     background: Rectangle {
@@ -137,7 +129,9 @@ T.ComboBox {
     }
 
     popup: T.Popup {
-        width: Math.max(control.width, 150)
+        // 最小宽度保证选项文字(如 "Text files (*.txt)")不被截断;
+        // 仅取 control.width 在窄布局下会把下拉选项挤成省略号
+        width: Math.max(control.width, 240)
         implicitHeight: Math.min(contentItem.implicitHeight, control.Window.height - topMargin - bottomMargin) + ThemeValues.largeSpacing
         transformOrigin: Item.Top
 
