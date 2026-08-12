@@ -173,9 +173,14 @@ T.ComboBox {
             // parent 是 popup(T.Popup)，没有 ThemeValues 属性，会抛 TypeError
             // 导致 ComboBox 下拉框背景无法创建（控件回退异常）。直接引用 JS 模块即可。
             color: ThemeValues.secondBackgroundColor
-            border.width: 0
+            border.width: 1
+            border.color: ThemeValues.darkMode ? Qt.rgba(255, 255, 255, 0.12)
+                                               : Qt.rgba(0, 0, 0, 0.1)
 
-            layer.enabled: true
+            // 原实现用 layer + DropShadow 做阴影，但软件渲染（QSG software）下
+            // GraphicalEffects 无法工作，导致下拉列表背景整体不渲染（列表"看不见"）。
+            // 改用简单边框（同 Menu/Dialog/ToolTip 修复），任何渲染后端都稳定可见。
+            layer.enabled: false
             layer.effect: DropShadow {
                 transparentBorder: true
                 radius: 32
