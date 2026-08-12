@@ -62,17 +62,12 @@ T.Dialog {
     background: Rectangle {
         radius: ThemeValues.hugeRadius
         color: ThemeValues.secondBackgroundColor
-        border.width: 0
+        border.width: 1
+        border.color: ThemeValues.darkMode ? Qt.rgba(255, 255, 255, 0.12) : Qt.rgba(0, 0, 0, 0.1)
 
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            radius: 32
-            samples: 32
-            horizontalOffset: 0
-            verticalOffset: 0
-            color: Qt.rgba(0, 0, 0, 0.15)
-        }
+        // 原实现用 layer + DropShadow 做阴影，但在软件渲染（QSG software）下
+        // GraphicalEffects 无法工作，导致背景整体不渲染（对话框"透明"）。
+        // 改用简单的边框分隔，任何渲染后端都稳定。
     }
 
     header: Item {

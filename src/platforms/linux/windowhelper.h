@@ -21,6 +21,7 @@
 #define WINDOWHELPER_H
 
 #include <QObject>
+#include <QQuickWindow>
 #include <QWindow>
 #include <xcb/xcb.h>
 
@@ -28,11 +29,17 @@ class WindowHelper : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool compositing READ compositing NOTIFY compositingChanged)
+    Q_PROPERTY(bool softwareRendering READ softwareRendering CONSTANT)
 
 public:
     explicit WindowHelper(QObject *parent = nullptr);
 
     bool compositing() const;
+
+    // 场景图是否使用软件渲染（QSG "software" 后端）。
+    // 软件渲染下 layer(FBO)+OpacityMask 会导致窗口内容无法上屏，
+    // 需要据此禁用圆角裁剪相关的 layer（见 Window.qml）。
+    bool softwareRendering() const;
 
     Q_INVOKABLE void startSystemMove(QWindow *w);
     Q_INVOKABLE void startSystemResize(QWindow *w, Qt::Edges edges);
@@ -53,6 +60,7 @@ private:
 private:
     xcb_atom_t m_moveResizeAtom;
     bool m_compositing;
+    bool m_softwareRendering;
 };
 
 #endif // WINDOWHELPER_H

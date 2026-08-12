@@ -60,7 +60,10 @@ Container {
 
             maximumFlickVelocity: 4 * width
 
-            cacheBuffer: _view.count * width
+            // 修复 Binding loop：cacheBuffer 依赖 count，count 变化又触发
+            // cacheBuffer 重算（TabView.qml:35 的 warning）。TabView 内容项不多，
+            // 无需预缓冲，置 0 即可。
+            cacheBuffer: 0
             keyNavigationEnabled : false
             keyNavigationWraps : false
         }
@@ -75,7 +78,19 @@ Container {
     }
 
     function addTab(component, properties) {
-        const object = component.createObject(control.contentModel, properties)
+        // parent 不能传 control.contentModel：它是 QAbstractListModel（非可视 QObject），
+        // 作为 Item 的 parent 会导致项不在场景里（parent=null、尺寸 0、编辑区空白）。
+        // 先以 TabView 为 parent 创建，再通过 addItem() 由 Container 内部
+        // reparent 到 contentItem(ListView) 并进入场景。
+        const object = component.createObject(control, properties)
+
+        if (object) {
+            // 强制标签项尺寸跟随 TabView：Container 会把 contentModel 项包装进一个
+            // 宽度为 0 的中间容器（父链上出现 0 宽节点），标签项若绑定 parent.width
+            // 会得到 0（编辑区空白）。这里显式绑定到 TabView 尺寸。
+            object.width = Qt.binding(function() { return control.width })
+            object.height = Qt.binding(function() { return control.height })
+        }
 
         control.addItem(object)
         control.currentIndex = Math.max(control.count - 1, 0)

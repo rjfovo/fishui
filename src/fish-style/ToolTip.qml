@@ -29,8 +29,9 @@ import "ThemeValues.js" as ThemeValues
 T.ToolTip {
     id: controlRoot
 
+    // 提示显示在按钮下方（原实现显示在上方，与菜单栏/工具栏布局冲突）
     x: parent ? (parent.width - implicitWidth) / 2 : 0
-    y: -implicitHeight - ThemeValues.smallSpacing * 1.5
+    y: parent ? parent.height + ThemeValues.smallSpacing : 0
 
     implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding
     implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
@@ -47,18 +48,14 @@ T.ToolTip {
     }
 
     background: Rectangle {
-        opacity: 0.95
         color: ThemeValues.secondBackgroundColor
         radius: ThemeValues.smallRadius
 
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            radius: 8
-            samples: 12
-            horizontalOffset: 0
-            verticalOffset: 0
-            color: Qt.rgba(0, 0, 0, 0.15)
-        }
+        // 原实现用 layer + DropShadow 做阴影，但软件渲染（QSG software）下
+        // GraphicalEffects 无法工作，导致提示背景透明、与背景混为一体。
+        // 改用带边框的实心背景，任何渲染后端都清晰可见。
+        border.width: 1
+        border.color: ThemeValues.darkMode ? Qt.rgba(255, 255, 255, 0.15)
+                                           : Qt.rgba(0, 0, 0, 0.12)
     }
 }

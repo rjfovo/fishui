@@ -68,8 +68,10 @@ T.Menu
         keyNavigationEnabled: true
         keyNavigationWraps: true
 
-        // 内容（菜单项高亮背景）按菜单圆角裁剪，避免首/末项高亮出现超出圆角的直角
-        layer.enabled: true
+        // 内容按菜单圆角裁剪（避免首/末项高亮超出圆角）。
+        // 软件渲染（QSG software）下 layer + OpacityMask 不工作，会导致菜单项
+        // 内容不渲染（菜单空白），因此这里禁用 layer（背景本身已带圆角）。
+        layer.enabled: false
         layer.effect: OpacityMask {
             maskSource: Rectangle {
                 radius: 10
@@ -81,27 +83,16 @@ T.Menu
         ScrollBar.vertical: ScrollBar {}
     }
 
-    background: Item {
-        Rectangle {
-            id: menuBackground
-            anchors.fill: parent
-            color: control.menuBackgroundColor
-            radius: 10
-            antialiasing: true
+    background: Rectangle {
+        // 原实现用 layer + DropShadow 做阴影，但软件渲染（QSG software）下
+        // GraphicalEffects 无法工作，导致菜单背景整体不渲染（菜单"看不见"）。
+        // 改用简单边框，任何渲染后端都稳定可见。
+        radius: 10
+        color: control.menuBackgroundColor
+        antialiasing: true
 
-            border.width: 1
-            border.color: control.isDark ? Qt.rgba(255, 255, 255, 0.15) : Qt.rgba(0, 0, 0, 0.12)
-        }
-
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            radius: 24
-            samples: 24
-            horizontalOffset: 0
-            verticalOffset: 0
-            color: Qt.rgba(0, 0, 0, 0.15)
-        }
+        border.width: 1
+        border.color: control.isDark ? Qt.rgba(255, 255, 255, 0.15) : Qt.rgba(0, 0, 0, 0.12)
     }
 
     T.Overlay.modal: Rectangle  {

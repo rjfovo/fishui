@@ -34,7 +34,9 @@ Item {
     property color backgroundColor: "transparent"
     property color hoveredColor: "#FF273D"
     property color pressedColor: "#CF182B"
-    property alias source: _image.source
+    property string source: ""
+    // hover/按下时使用的图标（红色圆底上应使用白色图标）
+    property string hoveredSource: ""
     property alias image: _image
     signal clicked()
 
@@ -64,5 +66,8 @@ Item {
         sourceSize: Qt.size(width, height)
         cache: true
         asynchronous: false
+        // hover/按下时优先使用 hoveredSource（红底上显示白色图标），否则用 source
+        source: (mouseArea.containsMouse || mouseArea.pressed) && control.hoveredSource.length > 0
+                ? control.hoveredSource : control.source
     }
 }

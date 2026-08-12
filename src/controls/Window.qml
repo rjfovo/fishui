@@ -387,7 +387,9 @@ Window {
 
         // Mask：fishui 侧真圆角（无黑角）。拉伸期间临时禁用 layer(FBO) 以保持流畅，
         // 尺寸稳定后自动恢复圆角。
-        layer.enabled: !control.resizing && _background.radius > 0
+        // 软件渲染（QSG software）下 layer(FBO)+OpacityMask 会导致整个内容区无法上屏
+        // （窗口只剩背景和边框），因此软件渲染时必须禁用 layer（同时放弃圆角裁剪）。
+        layer.enabled: !control.resizing && _background.radius > 0 && !windowHelper.softwareRendering
         layer.effect: OpacityMask {
             maskSource: Item {
                 width: _contentItem.width

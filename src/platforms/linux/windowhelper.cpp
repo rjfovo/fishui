@@ -54,7 +54,15 @@ WindowHelper::WindowHelper(QObject *parent)
     : QObject(parent)
     , m_moveResizeAtom(0)
     , m_compositing(false)
+    , m_softwareRendering(false)
 {
+    // 检测场景图渲染后端：软件渲染（QSG software）下 layer(FBO) + OpacityMask
+    // 会导致 FishUI.Window 的内容无法上屏，Window.qml 据此禁用圆角裁剪。
+    // QQuickWindow::sceneGraphBackend() 是静态方法，应用在创建 QGuiApplication
+    // 之前调用 QQuickWindow::setSceneGraphBackend() 即可在这里检测到。
+    const QString backend = QQuickWindow::sceneGraphBackend();
+    m_softwareRendering = (backend.compare(QLatin1String("software"), Qt::CaseInsensitive) == 0);
+
     // 创建 _NET_WM_MOVERESIZE atom
     xcb_connection_t* connection = x11Connection();
     if (connection) {
@@ -78,6 +86,11 @@ WindowHelper::WindowHelper(QObject *parent)
 bool WindowHelper::compositing() const
 {
     return m_compositing;
+}
+
+bool WindowHelper::softwareRendering() const
+{
+    return m_softwareRendering;
 }
 
 void WindowHelper::startSystemMove(QWindow *w)

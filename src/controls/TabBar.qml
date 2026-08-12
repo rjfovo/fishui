@@ -34,6 +34,8 @@ Item {
     property alias currentIndex: _listView.currentIndex
 
     signal newTabClicked()
+    // 标签栏空白区域双击（用于新建标签）
+    signal blankDoubleClicked()
 
     RowLayout {
         anchors.fill: parent
@@ -68,7 +70,16 @@ Item {
         }
 
         Item {
+            id: _spacer
             Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            // 空白区域双击 → 新建标签（Notepad++ 风格）
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onDoubleClicked: control.blankDoubleClicked()
+            }
         }
     }
 }

@@ -69,13 +69,21 @@ Rectangle {
         }
     }   
 
-    Image {
+    // 勾选标记：直接渲染文本 ✓（不依赖 qrc 资源）。
+    // 原实现引用 Qt5 资源 qrc:/qt-project.org/imports/QtQuick/Controls.2/Material/images/check.png，
+    // Qt6 下该 qrc 路径已失效（Controls.2 → Controls），导致勾选图标加载失败（QML QQuickImage:
+    // Cannot open）。改用文本字符，与 FishUI.MenuItem 的 checkMark 保持一致。
+    Text {
         id: checkImage
-        width: parent.height * 0.6
-        height: parent.height * 0.6
         anchors.centerIn: parent
-        source: "qrc:/qt-project.org/imports/QtQuick/Controls.2/Material/images/check.png"
-        fillMode: Image.PreserveAspectFit
+        text: "\u2713"
+        color: "white"
+        font.pixelSize: parent.height * 0.8
+        font.bold: true
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        // 微调：字符视觉中心略偏上，用基线偏移修正
+        anchors.verticalCenterOffset: 1
 
         scale: checked ? 1 : 0
         Behavior on scale {

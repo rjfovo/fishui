@@ -26,4 +26,5 @@ TabBar 1.0 TabBar.qml
 TabButton 1.0 TabButton.qml
 TextArea 1.0 TextArea.qml
 TextField 1.0 TextField.qml
+ToolButton 1.0 ToolButton.qml
 ToolTip 1.0 ToolTip.qml
