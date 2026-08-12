@@ -108,6 +108,10 @@ T.ComboBox {
         enabled: control.editable
         autoScroll: control.editable
         readOnly: control.down
+        // 只读显示用，不捕获鼠标点击（否则点击被 TextField 吞掉，
+        // ComboBox 收不到 TapHandler 事件，下拉列表打不开）
+        activeFocusOnPress: false
+        cursorVisible: false
         inputMethodHints: control.inputMethodHints
         validator: control.validator
 
