@@ -51,8 +51,8 @@ T.ComboBox {
                              implicitContentHeight + topPadding + bottomPadding,
                              implicitIndicatorHeight + topPadding + bottomPadding)
 
-    topInset: ThemeValues.smallSpacing
-    bottomInset: ThemeValues.smallSpacing
+    topInset: 2
+    bottomInset: 2
 
     spacing: ThemeValues.smallSpacing
     padding: ThemeValues.smallSpacing
@@ -67,6 +67,9 @@ T.ComboBox {
 
     delegate: MenuItem {
         width: control.popup.width
+        // 显式高度, 避免 popup 打开时 delegate 高度塌陷导致选项重叠/缩在一起
+        implicitHeight: 30
+        height: 30
         text: control.textRole ? (Array.isArray(control.model) ? modelData[control.textRole] : model[control.textRole]) : modelData
         highlighted: control.highlightedIndex === index
         hoverEnabled: control.hoverEnabled
@@ -124,7 +127,7 @@ T.ComboBox {
 
     background: Rectangle {
         implicitWidth:  (ThemeValues.iconSizes.medium * 3) + ThemeValues.largeSpacing
-        implicitHeight: ThemeValues.iconSizes.medium + ThemeValues.smallSpacing
+        implicitHeight: ThemeValues.iconSizes.smallMedium + ThemeValues.smallSpacing
 
         radius: ThemeValues.smallRadius
         color: ThemeValues.alternateBackgroundColor
@@ -160,7 +163,10 @@ T.ComboBox {
 
         contentItem: ListView {
             clip: true
-            implicitHeight: contentHeight
+            // 显式兜底: contentHeight 在 popup 首次打开时可能为 0(delegate 未实例化),
+            // 导致下拉高度塌陷、选项全部挤在一起。用 count 估算兜底。
+            implicitHeight: Math.max(contentHeight,
+                                     control.count * (30 + ThemeValues.smallSpacing))
             model: control.delegateModel
             currentIndex: control.highlightedIndex
             highlightMoveDuration: 0
