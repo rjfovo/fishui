@@ -96,7 +96,9 @@ Item {
             Image {
                 anchors.fill: parent
                 source: control.iconSource
-                sourceSize: Qt.size(14, 14)
+                // 高清渲染：SVG 直接以 14px 渲染时描边线条会糊成实心块（软件渲染下尤甚），
+                // 用大 sourceSize 渲染后由 Image 缩放显示，线条保持清晰
+                sourceSize: Qt.size(48, 48)
                 // 未选中标签图标保持较高可见度，避免红色笔与灰色笔难以区分
                 opacity: control.checked ? 1 : 0.85
             }
