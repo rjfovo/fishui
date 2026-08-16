@@ -19,6 +19,14 @@ case "$1" in
         else
             echo "Warning: fish-style source directory not found at $FISH_STYLE_SRC"
         fi
+
+        # Qt6 disk-caches compiled QML.  After a fish-style update, stale
+        # cache entries can keep reporting types such as ComboBox as
+        # unavailable even though the installed QML is valid.
+        for base in /home /root /var/lib/sddm; do
+            [ -d "$base" ] || continue
+            find "$base" -path "*/cutefishos/*/qmlcache" -type d -prune -exec rm -rf {} + 2>/dev/null || true
+        done
         ;;
         
     abort-upgrade|abort-remove|abort-deconfigure)

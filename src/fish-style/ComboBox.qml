@@ -113,8 +113,6 @@ T.ComboBox {
         elide: Text.ElideRight
         leftPadding: 0
         rightPadding: ThemeValues.smallSpacing
-        // 不捕获鼠标点击, 让 ComboBox 的 TapHandler 正常接收
-        activeFocusOnPress: false
     }
 
     background: Rectangle {
